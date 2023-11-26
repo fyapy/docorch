@@ -1,0 +1,19 @@
+{
+  "lock": true,
+  "nodeModulesDir": true,
+  "imports": {
+    "./": "./",
+    "/": "./"
+  },
+  "tasks": {
+    "start": "deno run --watch --unstable -A main.ts",
+    "prod": "deno run--unstable -A main.ts"
+  },
+  "lint": {
+    "include": ["."],
+    "exclude": ["node_modules/"],
+    "rules": {
+      "exclude": ["no-explicit-any", "ban-types"]
+    }
+  }
+}
