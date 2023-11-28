@@ -1,4 +1,4 @@
-import {useLayoutEffect} from 'react'
+import {useEffect, useLayoutEffect} from 'react'
 import {observer} from 'mobx-react-lite'
 import {FieldError, FormProvider, useForm} from 'react-hook-form'
 import {msgs, required} from 'utils/validate'
@@ -11,9 +11,9 @@ import * as Styled from './styles'
 
 export interface RunContainerValues {
   name: string
-  server: null | string
+  serverIp: null | string
   image: string
-  env: {k: string, v: string}[]
+  envs: {k: string, v: string}[]
   networks: {static: string, to: string}[]
   volumes: {host: string, inside: string}[]
   args: string[]
@@ -21,9 +21,9 @@ export interface RunContainerValues {
 
 const defaultValues: RunContainerValues = {
   name: 'nginx',
-  server: null,
+  serverIp: null,
   image: 'nginx:latest',
-  env: [{k: 'ENDPOINT', v: 'localhost'}],
+  envs: [{k: 'ENDPOINT', v: 'localhost'}],
   networks: [{static: '8080', to: '80'}],
   volumes: [{host: '~/pgdata', inside: '/var/lib/postgresql/data'}],
   args: ['server', '/data'],
@@ -42,22 +42,28 @@ export const RunContainer = observer(() => {
       const errors: Partial<Record<keyof RunContainerValues, FieldError>> = {}
 
       if (required(values.name)) errors.name = msgs.required
-      if (required(values.server)) errors.server = msgs.required
+      if (required(values.serverIp)) errors.serverIp = msgs.required
       if (required(values.image)) errors.image = msgs.required
 
       return {values, errors}
     },
   })
 
+  useEffect(() => {
+    if (servers.options.length) {
+      form.setValue('serverIp', servers.options[0].value)
+    }
+  }, [servers.options])
+
   const onSubmit = form.handleSubmit(containers.runContainer)
 
   return (
     <FormProvider {...form}>
       <Styled.Wrapper onSubmit={onSubmit}>
-        <FieldRadio name="server" placeholder="Server" options={servers.options} required />
+        <FieldRadio name="serverIp" placeholder="Server" options={servers.options} required />
         <FieldText name="name" placeholder="Name" required />
         <FieldText name="image" placeholder="Image" required />
-        <FieldMulti name="env" placeholder="Environment variables" empty={{k: '', v: ''}} />
+        <FieldMulti name="envs" placeholder="Environment variables" empty={{k: '', v: ''}} />
         <FieldMulti name="networks" placeholder="Ports (public, internal)" empty={{static: '', to: ''}} />
         <FieldMulti name="volumes" placeholder="Volumes (host, internal)" empty={{host: '', inside: ''}} />
         <FieldArray name="args" placeholder="Arguments" />

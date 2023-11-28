@@ -82,10 +82,13 @@ api.post(REMOVE_CONTAINER, async c => {
   const body = await c.req.json<{id: string}>()
 
   const {serverIp, dockerId} = ContainerModel.selectBy('id', body.id)
+
   if (serverIp === ip) {
     if (dockerId) {
       await docker.removeContainer(dockerId)
     }
+
+    ContainerModel.remove('id', body.id)
 
     return c.json({})
   }

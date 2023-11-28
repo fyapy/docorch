@@ -16,11 +16,11 @@ type IconProps = {
   onClick?(): void
 }
 
-export const Icon = ({width, height, fill, stroke, strokeWidth, transform, ...rest}: IconProps) => (
+export const Icon = ({name, width, height, fill, stroke, strokeWidth, transform, ...rest}: IconProps) => (
   <svg
     className="icon"
-    width="width"
-    height="height"
+    width={width}
+    height={height}
     {...rest}
   >
     <use

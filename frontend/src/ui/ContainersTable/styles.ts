@@ -22,7 +22,7 @@ export const Header = styled.div`
   }
 `
 
-export const Table = styled.div`
+export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
 

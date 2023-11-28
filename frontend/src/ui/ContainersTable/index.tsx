@@ -36,13 +36,13 @@ export const ContainersTable = observer(({list, pendings, action}: ContainersTab
               <tr key={row.id}>
                 <td data-label="Name">{row.name}</td>
                 <td data-label="Status" style={{minWidth: 120}}>
-                  <Styled.State data-state={row.state}>{row.state}</Styled.State>
+                  <Styled.State data-state={row.docker.state}>{row.docker.state}</Styled.State>
                 </td>
                 <td data-label="Image">{row.image}</td>
-                <td data-label="Ports" style={{minWidth: 80}}>{row.ports.map(port => `${port.static}:${port.to}`).join(', ')}</td>
+                <td data-label="Ports" style={{minWidth: 80}}>{row.networks.map(port => `${port.static}:${port.to}`).join(', ')}</td>
                 <td>
                   <Styled.BtnGroup>
-                    {row.state === 'exited' && (
+                    {row.docker.state === 'exited' && (
                       <Styled.Btn
                         disabled={pendings.includes(row.id)}
                         onClick={() => action(row.id, 'start')}
@@ -50,7 +50,7 @@ export const ContainersTable = observer(({list, pendings, action}: ContainersTab
                         <Icon name="play" width="16" height="16" fill="#FFF" />
                       </Styled.Btn>
                     )}
-                    {row.state === 'running' && (
+                    {row.docker.state === 'running' && (
                       <Styled.Btn
                         disabled={pendings.includes(row.id)}
                         onClick={() => action(row.id, 'stop')}
@@ -62,7 +62,7 @@ export const ContainersTable = observer(({list, pendings, action}: ContainersTab
                       disabled={pendings.includes(row.id)}
                       onClick={() => action(row.id, 'remove')}
                     >
-                      <Icon name="stop" width="16" height="16" fill="#FFF" />
+                      <Icon name="remove" width="16" height="16" fill="#FFF" />
                     </Styled.Btn>
                   </Styled.BtnGroup>
                 </td>
