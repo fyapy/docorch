@@ -14,8 +14,8 @@ export class ServersStore {
   }
 
   get options() {
-    return this.allList.map(({ip, current}) => ({
-      name: current ? `${ip} (master)` : ip,
+    return this.allList.map(({ip, master}) => ({
+      name: master ? `${ip} (master)` : ip,
       value: ip,
     }))
   }
@@ -25,7 +25,7 @@ export class ServersStore {
       const res = await http.get('/api/servers')
       runInAction(() => this.allList = res)
     } catch (e) {
-      console.log(e)
+      this.root.notifications.addAsyncError(e)
     }
   }
 }

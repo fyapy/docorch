@@ -5,19 +5,24 @@ import {
   Container,
   ContainersStore,
 } from 'logic/containers'
+import {ServersList} from 'ui/ServersList'
+import {Server} from 'logic/servers'
 import * as Styled from './styles'
 
 type ContainersTableProps = {
+  servers: Server[]
   list: Container[]
   pendings: string[]
   action: ContainersStore['containerAction']
 }
 
-export const ContainersTable = observer(({list, pendings, action}: ContainersTableProps) => (
+export const ContainersTable = observer(({list, servers, pendings, action}: ContainersTableProps) => (
   <>
     <Styled.Header>
       <Link to="/run-container">Run Container</Link>
     </Styled.Header>
+
+    <ServersList list={servers} />
 
     {list.length
       ? (
@@ -36,13 +41,15 @@ export const ContainersTable = observer(({list, pendings, action}: ContainersTab
               <tr key={row.id}>
                 <td data-label="Name">{row.name}</td>
                 <td data-label="Status" style={{minWidth: 120}}>
-                  <Styled.State data-state={row.docker.state}>{row.docker.state}</Styled.State>
+                  <Styled.State data-state={row.docker?.state || 'exited'}>
+                    {row.docker?.state || 'docker container not found'}
+                  </Styled.State>
                 </td>
                 <td data-label="Image">{row.image}</td>
                 <td data-label="Ports" style={{minWidth: 80}}>{row.networks.map(port => `${port.static}:${port.to}`).join(', ')}</td>
                 <td>
                   <Styled.BtnGroup>
-                    {row.docker.state === 'exited' && (
+                    {row.docker?.state === 'exited' && (
                       <Styled.Btn
                         disabled={pendings.includes(row.id)}
                         onClick={() => action(row.id, 'start')}
@@ -50,7 +57,7 @@ export const ContainersTable = observer(({list, pendings, action}: ContainersTab
                         <Icon name="play" width="16" height="16" fill="#FFF" />
                       </Styled.Btn>
                     )}
-                    {row.docker.state === 'running' && (
+                    {row.docker?.state === 'running' && (
                       <Styled.Btn
                         disabled={pendings.includes(row.id)}
                         onClick={() => action(row.id, 'stop')}

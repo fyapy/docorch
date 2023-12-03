@@ -21,7 +21,7 @@ export class ContainersStore {
       const res = await http.get('/api/containers')
       runInAction(() => this.allList = res)
     } catch (e) {
-      console.log(e)
+      this.root.notifications.addAsyncError(e)
     }
   }
   runContainer = async (values: RunContainerValues) => {
@@ -29,7 +29,7 @@ export class ContainersStore {
       await http.post('/api/run-container', values)
       navigate('/')
     } catch (e) {
-      console.log(e)
+      this.root.notifications.addAsyncError(e)
     }
   }
   containerAction = async (id: string, action: 'start' | 'stop' | 'remove') => {
@@ -38,7 +38,7 @@ export class ContainersStore {
       await http.post(`/api/${action}-container`, {id})
       await this.fetchList()
     } catch (e) {
-      console.log(e)
+      this.root.notifications.addAsyncError(e)
     }
     runInAction(() => {
       this.pendingList = this.pendingList.filter(i => i !== id)

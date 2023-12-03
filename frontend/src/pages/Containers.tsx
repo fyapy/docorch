@@ -4,10 +4,11 @@ import {ContainersTable} from 'ui/ContainersTable'
 import {useStore} from 'utils/hooks'
 
 export const Containers = observer(() => {
-  const {containers} = useStore()
+  const {containers, servers} = useStore()
 
   useLayoutEffect(() => {
     containers.fetchList()
+    servers.fetchList()
   }, [])
 
   return (
@@ -15,6 +16,7 @@ export const Containers = observer(() => {
       action={containers.containerAction}
       pendings={containers.pendingList}
       list={containers.allList}
+      servers={servers.allList}
     />
   )
 })

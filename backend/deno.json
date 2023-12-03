@@ -6,8 +6,8 @@
     "/": "./"
   },
   "tasks": {
-    "start": "deno run --watch --unstable -A main.ts",
-    "prod": "deno run--unstable -A main.ts"
+    "dev": "deno run --watch --unstable -A main.ts --master",
+    "prod": "deno run --unstable -A main.ts --master"
   },
   "lint": {
     "include": ["."],

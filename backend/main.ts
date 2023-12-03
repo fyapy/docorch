@@ -1,24 +1,20 @@
+import {getDiskInfo, handleError} from './utils.ts'
 import {Hono, ip} from './deps.ts'
+import {ServerModel} from './database.ts'
+import {flags} from './flags.ts'
 import api from './api.ts'
-import {NotFound, ServerModel} from './database.ts'
 
-if (!ServerModel.exists('ip', ip)) {
+if (flags.master && !ServerModel.exists('ip', ip)) {
   ServerModel.insert({ip})
 }
 
 const app = new Hono()
 
-app.onError((err, c) => {
-  if (err instanceof NotFound) {
-    return c.json({message: 'Database Object not found'}, 404)
-  }
+app.onError(handleError)
 
-  return c.json({message: err.message}, 400)
-})
+app.get('/', c => c.json({}))
 
-api.get('/', c => c.json({message: 'OK'}))
-
-api.get('/ip', c => c.json({ip}))
+app.get('/stats', c => getDiskInfo().then(space => c.json({ip, ...space})))
 
 app.route('/api', api)
 

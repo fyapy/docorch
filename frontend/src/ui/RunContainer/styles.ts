@@ -1,5 +1,5 @@
 import {styled} from 'styled-components'
-import { color } from 'ui/theme'
+import {color} from 'ui/theme'
 
 export const Wrapper = styled.form`
   max-width: 650px;

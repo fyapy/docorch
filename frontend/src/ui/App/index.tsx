@@ -1,6 +1,7 @@
 import {Link, Route, Switch} from 'wouter'
 import {Containers} from 'pages/Containers'
 import {RunContainer} from 'ui/RunContainer'
+import {NotificationLayout} from 'ui/NotificationLayout'
 import * as Styled from './styles'
 
 export const App = () => {
@@ -17,6 +18,8 @@ export const App = () => {
           <Route path="/" component={Containers} />
         </Switch>
       </Styled.Content>
+
+      <NotificationLayout />
     </Styled.Wrapper>
   )
 }

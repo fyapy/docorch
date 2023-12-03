@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { color } from 'ui/theme'
+import {color} from 'ui/theme'
 
 export const Required = styled.span`
   color: ${color.danger};

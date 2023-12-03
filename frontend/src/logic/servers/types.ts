@@ -1,5 +1,7 @@
-
 export interface Server {
   ip: string
-  current: boolean
+  master: boolean
+  online: boolean
+  total: string
+  free: string
 }

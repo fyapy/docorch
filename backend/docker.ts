@@ -1,5 +1,5 @@
-import { fetchUnix, delay } from './deps.ts'
-import { CreateContainerInput } from './types.ts'
+import {Network, Volume, Env} from './types.ts'
+import {fetchUnix, delay} from './deps.ts'
 
 const headers = {'Content-Type': 'application/json'} as const
 const post = {headers, method: 'POST', body: '{}'} as const
@@ -67,6 +67,16 @@ export async function stopContainer(id: string) {
   if (!id) throw new Error('startContainer id required!')
 
   await fetchUnix(`/containers/${id}/stop`, post)
+}
+
+interface CreateContainerInput {
+  serverIp: string
+  name: string
+  image: string
+  networks: Network[]
+  envs: Env[]
+  volumes: Volume[]
+  args: string[]
 }
 
 export async function createContainer({name, image, envs, networks, volumes, args}: CreateContainerInput) {
