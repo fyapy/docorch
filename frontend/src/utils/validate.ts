@@ -1,5 +1,4 @@
 import type {
-  FieldError,
   FieldValues,
   UseFormStateReturn,
   ControllerFieldState,

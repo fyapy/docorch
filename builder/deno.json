@@ -6,9 +6,7 @@
     "/": "./"
   },
   "tasks": {
-    "dev": "deno run --watch --unstable -A main.ts --master",
-    "prod": "deno run --unstable -A main.ts --master",
-    "build": "deno compile --unstable -A --output docorch main.ts"
+    "build": "deno run --unstable -A main.ts"
   },
   "lint": {
     "include": ["."],

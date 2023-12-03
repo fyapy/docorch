@@ -18,4 +18,8 @@ app.get('/stats', c => getDiskInfo().then(space => c.json({ip, ...space})))
 
 app.route('/api', api)
 
+if (flags.master) {
+  (await import('./ui.ts')).default(app)
+}
+
 Deno.serve({port: 4545}, app.fetch)
