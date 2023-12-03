@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react-swc'
 
 export default defineConfig({
   plugins: [tsconfigPaths(), react()],
-  base: process.env.BASE_URL,
+  base: '/ui',
   server: {
     port: 4500,
     host: true,

@@ -16,7 +16,9 @@ for (const file of frontendFiles) {
 
   if (file.endsWith('.html')) uiFile = uiFile.replace('<--html-->', content)
   if (file.endsWith('.css')) uiFile = uiFile.replace('<--css-->', content)
-  // if (file.endsWith('.js')) uiFile = uiFile.replace('<--js-->', content)
+  if (file.endsWith('.js')) {
+    uiFile = uiFile.replace('`<--js-->`', JSON.stringify(content.split('`'), null, 2) + ".join('`')")
+  }
   if (file.endsWith('.svg')) uiFile = uiFile.replace('<--svg-->', content)
 }
 

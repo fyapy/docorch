@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && BASE_URL=/ui vite build"
+    "build": "tsc && vite build"
   },
   "dependencies": {
     "mobx": "^6.11.0",
