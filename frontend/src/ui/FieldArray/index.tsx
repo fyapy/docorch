@@ -1,4 +1,4 @@
-import {useFieldArray, useFormContext} from 'react-hook-form'
+import {FieldArray as FormikArray, Field} from 'formik'
 import * as Styled from './styles'
 
 type FieldArrayProps = {
@@ -6,22 +6,23 @@ type FieldArrayProps = {
   placeholder: string
 }
 
-export const FieldArray = ({name, placeholder}: FieldArrayProps) => {
-  const {register} = useFormContext()
-  const {fields, remove, append} = useFieldArray({name})
+export const FieldArray = ({name, placeholder}: FieldArrayProps) => (
+  <FormikArray
+    name={name}
+    render={({remove, push, form}) => (
+      <Styled.Wrapper>
+        <label>{placeholder}</label>
 
-  return (
-    <Styled.Wrapper>
-      <label>{placeholder}</label>
-      {fields.map((field, index) => (
-        <Styled.InputGroup key={field.id}>
-          <input {...register(`${name}.${index}`)} />
+        {(form.values[name] as any[]).map((_, index) => (
+          <Styled.InputGroup key={index}>
+            <Field name={`${name}.${index}`} />
 
-          <Styled.Remove type="button" onClick={() => remove(index)}>X</Styled.Remove>
-        </Styled.InputGroup>
-      ))}
+            <Styled.Remove type="button" onClick={() => remove(index)}>X</Styled.Remove>
+          </Styled.InputGroup>
+        ))}
 
-      <Styled.Btn type="button" onClick={() => append('')}>Add</Styled.Btn>
-    </Styled.Wrapper>
-  )
-}
+        <Styled.Btn type="button" onClick={() => push('')}>Add</Styled.Btn>
+      </Styled.Wrapper>
+    )}
+  />
+)

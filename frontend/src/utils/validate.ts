@@ -1,15 +1,6 @@
-import type {
-  FieldValues,
-  UseFormStateReturn,
-  ControllerFieldState,
-} from 'react-hook-form'
+import {FieldMetaProps} from 'formik'
 
-export const isHasError = (
-  fieldState: ControllerFieldState,
-  formState?: UseFormStateReturn<FieldValues>
-) =>
-  ((fieldState.isTouched || formState?.isSubmitted) &&
-    fieldState.error?.message) || undefined
+export const isHasError = (meta: FieldMetaProps<any>) => meta.touched && meta.error
 
 export const required = <T>(value: T) => Array.isArray(value)
   ? value.length === 0
@@ -18,8 +9,5 @@ export const required = <T>(value: T) => Array.isArray(value)
     : !value || typeof value === 'undefined' || value === null)
 
 export const msgs = {
-  required: {
-    type: 'manual',
-    message: 'Это поле обязательно для заполнения',
-  }
+  required: 'Это поле обязательно для заполнения',
 }

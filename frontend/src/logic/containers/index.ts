@@ -1,6 +1,6 @@
-import {navigate} from 'wouter/use-location'
 import {makeAutoObservable, runInAction} from 'mobx'
 import {RunContainerValues} from 'ui/RunContainer'
+import {navigate} from 'utils/router'
 import {Root} from 'logic/root'
 import http from 'utils/http'
 import {Container} from './types'

@@ -1,4 +1,4 @@
-import {useController} from 'react-hook-form'
+import {useField} from 'formik'
 import {isHasError} from 'utils/validate'
 import * as Styled from './styles'
 
@@ -13,9 +13,9 @@ type FieldRadioProps = {
 }
 
 export const FieldRadio = ({name, required, placeholder, options}: FieldRadioProps) => {
-  const {field, fieldState, formState} = useController({name})
+  const [field, meta] = useField({name})
 
-  const error = isHasError(fieldState, formState)
+  const error = isHasError(meta)
 
   return (
     <Styled.Wrapper>

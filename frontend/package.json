@@ -8,11 +8,11 @@
     "build": "tsc && vite build"
   },
   "dependencies": {
+    "formik": "^2.4.5",
     "mobx": "^6.11.0",
     "mobx-react-lite": "^4.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.48.2",
     "styled-components": "^6.1.1",
     "wouter": "^2.12.1"
   },
@@ -22,8 +22,8 @@
     "@types/react-dom": "^18.2.15",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "sass": "^1.69.5",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.0",
-    "vite-tsconfig-paths": "^4.2.1"
+    "typescript": "^5.3.3",
+    "vite": "^5.0.7",
+    "vite-tsconfig-paths": "^4.2.2"
   }
 }

@@ -1,5 +1,5 @@
 import {observer} from 'mobx-react-lite'
-import {useController} from 'react-hook-form'
+import {useField} from 'formik'
 import {isHasError} from 'utils/validate'
 import * as Styled from './styles'
 
@@ -10,9 +10,9 @@ type FieldTextProps = {
 }
 
 export const FieldText = observer(({placeholder, required, name}: FieldTextProps) => {
-  const {field, fieldState, formState} = useController({name})
+  const [field, meta] = useField({name})
 
-  const error = isHasError(fieldState, formState)
+  const error = isHasError(meta)
 
   return (
     <Styled.Wrapper>
@@ -20,10 +20,7 @@ export const FieldText = observer(({placeholder, required, name}: FieldTextProps
         {placeholder}
         {required && <Styled.Required> *</Styled.Required>}
       </label>
-      <input
-        {...field}
-        onChange={field.onChange}
-      />
+      <input {...field} />
       {error && <Styled.Error>{error}</Styled.Error>}
     </Styled.Wrapper>
   )
