@@ -3,6 +3,7 @@ import {Hono, ip} from './deps.ts'
 import {ServerModel} from './database.ts'
 import {flags} from './flags.ts'
 import api from './api.ts'
+import ui from './ui.ts'
 
 if (flags.master && !ServerModel.exists('ip', ip)) {
   ServerModel.insert({ip})
@@ -19,7 +20,7 @@ app.get('/stats', c => getDiskInfo().then(space => c.json({ip, ...space})))
 app.route('/api', api)
 
 if (flags.master) {
-  (await import('./ui.ts')).default(app)
+  ui(app)
 }
 
 Deno.serve({port: 4545}, app.fetch)

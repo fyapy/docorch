@@ -6,8 +6,8 @@
     "/": "./"
   },
   "tasks": {
-    "dev": "deno run --watch --unstable -A main.ts --master",
-    "prod": "deno run --unstable -A main.ts --master",
+    "dev": "deno run --watch --unstable -A main.ts --master=hono:123",
+    "prod": "deno run --unstable -A main.ts --master=hono:123",
     "build": "deno compile --unstable -A --output docorch main.ts"
   },
   "lint": {

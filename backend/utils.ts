@@ -1,8 +1,12 @@
-import {Env, ErrorHandler, Handler, Hono, checkDiskSpace, socketPath} from './deps.ts'
+import {Env, ErrorHandler, HTTPException, Handler, Hono, checkDiskSpace, socketPath} from './deps.ts'
 import {NotFound} from './database.ts'
 import {flags} from './flags.ts'
 
 export const handleError: ErrorHandler<Env> = (err, c) => {
+  if (err instanceof HTTPException) {
+    return err.getResponse()
+  }
+
   if (err instanceof NotFound) {
     return c.json({message: 'Database Object not found'}, 404)
   }
@@ -11,7 +15,11 @@ export const handleError: ErrorHandler<Env> = (err, c) => {
     return c.json({message: 'Docker deamon not started'}, 500)
   }
 
-  return c.json({message: err.message}, 400)
+  if (err instanceof Response) {
+    return err
+  }
+
+  return c.json({message: err.message || 'Unknown error'}, 400)
 }
 
 type RouteOptions = {

@@ -23,6 +23,8 @@ export const fetchUnix = (url: string, {method = 'GET', body, headers}: FetchUni
 export const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
 
 export {Hono} from 'https://deno.land/x/hono@v3.9.2/mod.ts'
+export {basicAuth} from 'https://deno.land/x/hono@v3.9.2/middleware.ts'
+export {HTTPException} from 'https://deno.land/x/hono@v3.9.2/http-exception.ts'
 export type {Env, ErrorHandler, Handler} from 'https://deno.land/x/hono@v3.9.2/mod.ts'
 
 import {getIP} from 'https://deno.land/x/get_ip@v2.0.0/mod.ts'

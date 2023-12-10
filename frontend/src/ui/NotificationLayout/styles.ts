@@ -4,7 +4,7 @@ import {color} from 'ui/theme'
 export const Absolute = styled.div`
   position: absolute;
   right: 20px;
-  bottom: 20px;
+  top: 20px;
 
   max-height: calc(100vh - 40px);
 `
