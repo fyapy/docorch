@@ -1,5 +1,5 @@
 import {Network, Volume, Env} from './types.ts'
-import {fetchUnix, delay} from './deps.ts'
+import {fetchUnix, delay} from '../deps.ts'
 
 const headers = {'Content-Type': 'application/json'} as const
 const post = {headers, method: 'POST', body: '{}'} as const
@@ -83,7 +83,6 @@ export async function createContainer({name, image, envs, networks, volumes, arg
   if (!name) throw new Error('createContainer name required!')
   if (!image) throw new Error('createContainer image required!')
 
-  console.log('volumes', volumes)
   const body = {
     Cmd: args,
     Image: image,
@@ -97,6 +96,10 @@ export async function createContainer({name, image, envs, networks, volumes, arg
         ...acc,
         [`${item.to}/tcp`]: [{HostPort: `${item.static}`}],
       }), {}),
+      Binds: volumes.reduce<string[]>((acc, item) => ([
+        ...acc,
+        `${item.host}:${item.inside}`,
+      ]), []),
     },
   }
 

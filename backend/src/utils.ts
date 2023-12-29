@@ -1,4 +1,4 @@
-import {Env, ErrorHandler, HTTPException, Handler, Hono, checkDiskSpace, socketPath} from './deps.ts'
+import {Env, ErrorHandler, HTTPException, Handler, Hono, checkDiskSpace, socketPath} from '../deps.ts'
 import {NotFound} from './database.ts'
 import {flags} from './flags.ts'
 
@@ -33,13 +33,17 @@ export function masterRoute(hono: Hono, {method, url, handle}: RouteOptions) {
   }
 
   if (method === 'GET') {
+    console.log(`${method}  ${url}`)
     hono.get(url, handle)
     return
   }
   if (method === 'POST') {
+    console.log(`${method} ${url}`)
     hono.post(url, handle)
     return
   }
+
+  console.error(`masterRoute error ${method} ${url}`)
 }
 export function slaveRoute(hono: Hono, {method, url, handle}: RouteOptions) {
   if (!flags.slave) {
@@ -47,13 +51,17 @@ export function slaveRoute(hono: Hono, {method, url, handle}: RouteOptions) {
   }
 
   if (method === 'GET') {
+    console.log(`${method}  ${url}`)
     hono.get(url, handle)
     return
   }
   if (method === 'POST') {
+    console.log(`${method} ${url}`)
     hono.post(url, handle)
     return
   }
+
+  console.error(`slaveRoute error ${method} ${url}`)
 }
 
 export const defineHandlers = (handlers: (hono: Hono) => void) => (hono: Hono) => handlers(hono)
@@ -79,4 +87,14 @@ export async function getDiskInfo() {
     total: formatBytes(space.size),
     free: formatBytes(space.free),
   }
+}
+
+const transports = ['tcp', 'udp']
+
+export function requestIp(addr: Deno.Addr) {
+  if (transports.includes(addr.transport)) {
+    return (addr as Deno.NetAddr).hostname
+  }
+
+  return (addr as Deno.UnixAddr).path
 }

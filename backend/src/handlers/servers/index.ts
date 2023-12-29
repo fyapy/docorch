@@ -1,6 +1,6 @@
-import {defineHandlers, getDiskInfo, masterRoute} from '/utils.ts'
-import {ServerModel} from '/database.ts'
-import {callNode, ip} from '/deps.ts'
+import {defineHandlers, getDiskInfo, masterRoute} from '../../utils.ts'
+import {callNode, ip} from '../../../deps.ts'
+import {ServerModel} from '../../database.ts'
 
 export default defineHandlers(api => {
   masterRoute(api, {

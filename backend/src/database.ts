@@ -1,4 +1,5 @@
-import {fs, path} from './deps.ts'
+import {flags, debug} from './flags.ts'
+import {fs, path} from '../deps.ts'
 
 const DATA_DIR = `${Deno.cwd()}/docorch-data`
 if (!fs.existsSync(DATA_DIR)) {
@@ -26,10 +27,20 @@ function createTable<T extends Record<string, any>>({name}: CreateTableProps) {
   let hasChanges = false
 
   function select() {
+    if (flags.slave) {
+      debug('database method select called')
+      return []
+    }
+
     return data.map(item => ({...item}))
   }
 
   function selectBy(key: keyof T, value: T[keyof T]): T {
+    if (flags.slave) {
+      debug('database method selectBy called')
+      throw new NotFound()
+    }
+
     const item = data.find(item => item[key] === value)
     if (!item) {
       throw new NotFound()
@@ -39,14 +50,25 @@ function createTable<T extends Record<string, any>>({name}: CreateTableProps) {
   }
 
   function insert(newRow: T) {
+    if (flags.slave) {
+      debug('database method insert called')
+      return
+    }
+
     data.push(newRow)
     hasChanges = true
     return newRow
   }
 
   function update(key: keyof T, value: T[keyof T], set: Partial<T>) {
+    if (flags.slave) {
+      debug('database method update called')
+      return data
+    }
+
     data = data.map(item => {
       if (item[key] === value) {
+        hasChanges = true
         return {...item, ...set}
       }
 
@@ -55,10 +77,21 @@ function createTable<T extends Record<string, any>>({name}: CreateTableProps) {
   }
 
   function remove(key: keyof T, value: T[keyof T]) {
+    if (flags.slave) {
+      debug('database method remove called')
+      return data
+    }
+
     data = data.filter(item => item[key] !== value)
+    hasChanges = true
   }
 
   function exists(key: keyof T, value: T[keyof T]) {
+    if (flags.slave) {
+      debug('database method exists called')
+      return false
+    }
+
     return data.some(item => item[key] === value)
   }
 

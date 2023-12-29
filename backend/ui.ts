@@ -1,5 +1,5 @@
 import {Hono, basicAuth} from './deps.ts'
-import {flags} from './flags.ts'
+import {flags} from './src/flags.ts'
 
 export default (hono: Hono) => {
   const [username, password] = flags.master!.split(':')
@@ -155,7 +155,8 @@ export default (hono: Hono) => {
         <path d="M26.2 12.4 9 2.4A3.2 3.2 0 0 0 7.4 2 3.4 3.4 0 0 0 4 5.4v21.3a3.3 3.3 0 0 0 5.1 2.8l17.2-10.9a3.6 3.6 0 0 0-.1-6.2z" />
       </svg>
     </div>
-
+
+
   </body>
 </html>
 `))

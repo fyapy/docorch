@@ -1,5 +1,5 @@
 import {Hono, basicAuth} from './deps.ts'
-import {flags} from './flags.ts'
+import {flags} from './src/flags.ts'
 
 export default (hono: Hono) => {
   const [username, password] = flags.master!.split(':')

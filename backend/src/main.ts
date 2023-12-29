@@ -1,9 +1,9 @@
-import {getDiskInfo, handleError} from './utils.ts'
-import {Hono, ip} from './deps.ts'
+import {getDiskInfo, handleError, requestIp} from './utils.ts'
 import {ServerModel} from './database.ts'
+import {Hono, ip} from '../deps.ts'
 import {flags} from './flags.ts'
 import api from './api.ts'
-import ui from './ui.ts'
+import ui from '../ui.ts'
 
 if (flags.master && !ServerModel.exists('ip', ip)) {
   ServerModel.insert({ip})
@@ -23,4 +23,7 @@ if (flags.master) {
   ui(app)
 }
 
-Deno.serve({port: 4545}, app.fetch)
+Deno.serve(
+  {port: 4545},
+  (req, info) => app.fetch(req, {ip: requestIp(info.remoteAddr)}),
+)
