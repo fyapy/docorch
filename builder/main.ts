@@ -30,7 +30,7 @@ if (await exists('../backend/docorch')) {
   await Deno.remove('../backend/docorch')
 }
 await runCommand('deno', {
-  args: ['task', 'build'],
+  args: ['task', 'build:linux'],
   showError: false,
   cwd: 'backend',
 })
