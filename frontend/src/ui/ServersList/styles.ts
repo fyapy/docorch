@@ -6,10 +6,11 @@ export const Wrapper = styled.div`
 
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
 `
 
 export const Item = styled.div`
-  height: 60px;
+  height: 80px;
   padding: 0 20px 0 10px;
 
   display: flex;

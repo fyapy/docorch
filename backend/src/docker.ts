@@ -12,11 +12,9 @@ export async function images() {
   }[]
 }
 
-export const imageExists = (image: string) => images().then(images => {
-
-  console.log(images, 'images')
-  return images.some(i => i.RepoTags.some(tag => tag.includes(image)))
-})
+export const imageExists = (image: string) => images().then(images =>
+  images.some(i => i.RepoTags.some(tag => tag.includes(image)))
+)
 
 export async function imageRepeatableExists(image: string, repeats = 60, ms = 1000): Promise<boolean> {
   const hasImage = await imageExists(image)
@@ -41,20 +39,34 @@ export async function pullImage(name: string) {
 }
 
 export async function containers() {
-  const res = await fetchUnix('/containers/json?all=true')
-  return await res.json() as {
-    Id: string
-    Names: string[]
-    Image: string
-    ImageID: string
-    Ports: {
-      PrivatePort: number
-      PublicPort: number
+  try {
+    const res = await fetchUnix('/containers/json?all=true')
+    return await res.json() as {
+      Id: string
+      Names: string[]
+      Image: string
+      ImageID: string
+      Ports: {
+        PrivatePort: number
+        PublicPort: number
+      }[]
+      State: 'exited' | 'running'
+      Status: string
+      Mounts: {}[]
     }[]
-    State: 'exited' | 'running'
-    Status: string
-    Mounts: {}[]
-  }[]
+  } catch (e) {
+    console.error(`Docker containers error `, e)
+    throw e
+  }
+}
+
+export async function enabled() {
+  try {
+    await containers()
+    return true
+  } catch {
+    return false
+  }
 }
 
 export async function startContainer(id: string) {

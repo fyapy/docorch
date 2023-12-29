@@ -36,8 +36,8 @@ export * as path from 'https://deno.land/std@0.205.0/path/mod.ts'
 export {parse} from 'https://deno.land/std@0.205.0/flags/mod.ts'
 
 export async function callNode<T>(serverId: string, url: string, {method = 'GET', body, headers, prefix = '/api'}: FetchUnixOptions = {}) {
-  const res = await fetch(`http://${serverId}${prefix}${url}`, {method, body, headers})
-  if (!res.ok) {
+  const res = await fetch(`http://${serverId}:4545${prefix}${url}`, {method, body, headers})
+  if (res.ok) {
     return await res.json() as T
   }
 

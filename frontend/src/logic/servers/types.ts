@@ -4,4 +4,5 @@ export interface Server {
   online: boolean
   total: string
   free: string
+  docker: boolean
 }

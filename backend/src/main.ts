@@ -1,6 +1,7 @@
 import {getDiskInfo, handleError, requestIp} from './utils.ts'
 import {ServerModel} from './database.ts'
 import {Hono, ip} from '../deps.ts'
+import {enabled} from './docker.ts'
 import {flags} from './flags.ts'
 import api from './api.ts'
 import ui from '../ui.ts'
@@ -15,7 +16,12 @@ app.onError(handleError)
 
 app.get('/', c => c.json({}))
 
-app.get('/stats', c => getDiskInfo().then(space => c.json({ip, ...space})))
+app.get('/stats', async c => {
+  const space = await getDiskInfo()
+  const docker = await enabled()
+
+  return c.json({ip, ...space, docker})
+})
 
 app.route('/api', api)
 

@@ -14,6 +14,7 @@ export const ServersList = ({list}: ServersListProps) => (
         <div>
           <div>{server.ip} {server.master && '(master)'}</div>
           <div>{server.free}/{server.total}</div>
+          <div>Docker: {`${server.docker}`}</div>
         </div>
       </Styled.Item>
     ))}

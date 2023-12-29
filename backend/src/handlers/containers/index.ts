@@ -10,7 +10,15 @@ export default defineHandlers(api => {
   slaveRoute(api, {
     method: 'GET',
     url: LOCAL_CONTAINERS,
-    handle: c => docker.containers().then(c.json),
+    async handle(c) {
+      try {
+        const list = await docker.containers()
+        return c.json(list)
+      } catch (e) {
+        console.error(333, e)
+        return c.json([])
+      }
+    },
   })
 
   masterRoute(api, {
@@ -19,10 +27,20 @@ export default defineHandlers(api => {
     handle: async c => {
       const responses = await Promise.all(ServerModel.select().map(({ip: serverIp}) => {
         if (serverIp === ip) {
-          return docker.containers()
+          try {
+            return docker.containers()
+          } catch (e) {
+            console.error(1, e)
+            return []
+          }
         }
 
-        return callNode<ReturnType<typeof docker.containers>>(serverIp, LOCAL_CONTAINERS)
+        try {
+          return callNode<ReturnType<typeof docker.containers>>(serverIp, LOCAL_CONTAINERS)
+        } catch (e) {
+          console.error(2, e)
+          return []
+        }
       }))
 
       return c.json(ContainerModel.select().map(item => {

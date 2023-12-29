@@ -1,4 +1,5 @@
 import {makeAutoObservable, runInAction} from 'mobx'
+import {nanoid} from 'nanoid'
 import {Root} from 'logic/root'
 import {Notification} from './types'
 
@@ -18,7 +19,7 @@ export class NotificationsStore {
 
       if (res?.message) {
         runInAction(() => this.allList.push({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           text: res.message,
           type: 'error',
         }))
@@ -27,7 +28,7 @@ export class NotificationsStore {
     }
 
     if (typeof e === 'string') {
-      this.allList.push({id: crypto.randomUUID(), text: e, type: 'error'})
+      this.allList.push({id: nanoid(), text: e, type: 'error'})
       return
     }
 

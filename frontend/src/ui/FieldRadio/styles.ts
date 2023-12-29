@@ -21,6 +21,7 @@ export const Wrapper = styled.div`
 export const Items = styled.div`
   display: flex;
   flex-flow: row wrap;
+  gap: 10px;
 `
 
 export const Item = styled.div`

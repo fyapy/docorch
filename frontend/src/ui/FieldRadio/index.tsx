@@ -13,7 +13,7 @@ type FieldRadioProps = {
 }
 
 export const FieldRadio = ({name, required, placeholder, options}: FieldRadioProps) => {
-  const [field, meta] = useField({name})
+  const [field, meta, {setValue}] = useField({name})
 
   const error = isHasError(meta)
 
@@ -28,7 +28,7 @@ export const FieldRadio = ({name, required, placeholder, options}: FieldRadioPro
         {options.map(({value, name}) => (
           <Styled.Item
             key={value}
-            onClick={() => field.onChange(value)}
+            onClick={() => setValue(value)}
           >
             <Styled.Dot className={field.value === value ? 'active' : ''} />
             {name}
