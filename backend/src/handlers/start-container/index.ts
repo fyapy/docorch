@@ -31,6 +31,10 @@ export default defineHandlers(api => {
     handle: async c => {
       const body = await c.req.json<{id: string}>()
 
+      return c.json({
+        body,
+        list: ContainerModel.select(),
+      })
       const {serverIp, dockerId} = ContainerModel.selectBy('id', body.id)
 
       return c.json({serverIp, dockerId})
