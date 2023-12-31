@@ -6,3 +6,5 @@ export function fileRemoveSync(path: string) {
   }
   console.log(`Removed ${path}`)
 }
+
+export const cwd = '/var/www'

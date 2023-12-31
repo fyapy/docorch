@@ -1,6 +1,6 @@
 import {Command, execCommand, parseArguments} from './cli.ts'
+import {cwd, fileRemoveSync} from './utils.ts'
 import {download, fs, os} from '../deps.ts'
-import {fileRemoveSync} from './utils.ts'
 
 const command = parseArguments(Deno.args)
 
@@ -62,17 +62,17 @@ if (command.cmd === Command.ServiceInit) {
 }
 
 if (command.cmd === Command.ServiceUpdate) {
-  isLinux && await execCommand(`sudo apt install unzip -y`)
+  isLinux && await execCommand(`apt install unzip -y`)
 
-  fileRemoveSync(`${Deno.cwd()}/docorch.zip`)
+  fileRemoveSync(`${cwd}/docorch.zip`)
 
   console.log('Update downloading')
   const docorchZipUrl = 'https://github.com/fyapy/docorch/raw/master/backend/docorch.zip'
-  await download(docorchZipUrl, {file: './docorch.zip', dir: Deno.cwd()})
+  await download(docorchZipUrl, {file: './docorch.zip', dir: cwd})
   console.log('Update downloaded')
 
   isLinux && await execCommand(`systemctl stop ${serviceName}`)
-  fileRemoveSync(`${Deno.cwd()}/docorch`)
+  fileRemoveSync(`${cwd}/docorch`)
 
   await execCommand(`unzip docorch.zip`)
   await execCommand(`chmod +x ./docorch`)

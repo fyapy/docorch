@@ -1,4 +1,5 @@
 import {parseArgs} from '../deps.ts'
+import {cwd} from './utils.ts'
 
 export enum Command {
   ServiceInit = 'service init',
@@ -46,10 +47,10 @@ export function parseArguments(args: string[]) {
 }
 
 export async function execCommand(originalCommand: string) {
-  console.log(`Exec: ${originalCommand} in ${Deno.cwd()}`)
+  console.log(`Exec: ${originalCommand}`)
   const [cmd, ...args] = originalCommand.split(' ')
 
-  const command = new Deno.Command(cmd, {args, cwd: Deno.cwd()})
+  const command = new Deno.Command(cmd, {args, cwd})
 
   const {code, stderr, stdout} = await command.output()
 
