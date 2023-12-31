@@ -30,6 +30,7 @@ export const ContainersTable = observer(({list, servers, pendings, action}: Cont
           <thead>
             <tr>
               <th>Name</th>
+              <th>Server</th>
               <th>Status</th>
               <th>Image</th>
               <th>Ports</th>
@@ -40,6 +41,7 @@ export const ContainersTable = observer(({list, servers, pendings, action}: Cont
             {list.map(row => (
               <tr key={row.id}>
                 <td data-label="Name">{row.name}</td>
+                <td data-label="Server">{row.serverIp}</td>
                 <td data-label="Status" style={{minWidth: 120}}>
                   <Styled.State data-state={row.docker?.state || 'exited'}>
                     {row.docker?.state || 'docker container not found'}

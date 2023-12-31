@@ -1,14 +1,11 @@
-import {exists, getFilesList, runCommand} from './utils.ts'
+import {execCommand, exists, filesList} from './utils.ts'
 
 console.log('Frontend build start')
-await runCommand('pnpm', {
-  args: ['build'],
-  cwd: 'frontend',
-})
+await execCommand('pnpm build', 'frontend')
 console.log('Frontend builded')
 
 
-const frontendFiles = await getFilesList('../frontend/dist')
+const frontendFiles = await filesList('../frontend/dist')
 let uiFile = await Deno.readTextFile('../backend/ui-template.ts')
 
 for (const file of frontendFiles) {
@@ -29,10 +26,12 @@ console.log('Backend build start')
 if (await exists('../backend/docorch')) {
   await Deno.remove('../backend/docorch')
 }
-await runCommand('deno', {
-  args: ['task', 'build:linux'],
-  showError: false,
-  cwd: 'backend',
-})
+
+await execCommand('deno task build:linux', 'backend')
 console.log('Backend builded')
+
+
+console.log('Backend zipping start')
+await execCommand('zip docorch.zip docorch', 'backend')
+console.log('Backend zipped')
 

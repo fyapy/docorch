@@ -13,7 +13,18 @@ interface Flags {
 
 export const flags = parse<Flags>(Deno.args)
 
+const envMaster = Deno.env.get('master')
+if (envMaster) {
+  flags.master = envMaster
+}
+
+const envSlave = Deno.env.get('slave')
+if (envSlave) {
+  flags.slave = envSlave
+}
+
 export const debug = flags.debug ? console.log : () => {}
+
 
 if (flags.master) {
   const [username, password] = flags.master.split(':')
@@ -50,5 +61,8 @@ if (flags.master) {
     }
   }
 } else {
-  throw new Error('Flags not provided')
+  throw new Error(`Flags not provided ${JSON.stringify({
+    env: Deno.env.toObject(),
+    flags,
+  })}`)
 }

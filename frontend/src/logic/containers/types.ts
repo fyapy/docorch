@@ -9,6 +9,7 @@ export interface Container {
   status: string
   image: string
   imageId: string
+  serverIp: string
   networks: Network[]
   docker: {
     state: 'exited' | 'running'
