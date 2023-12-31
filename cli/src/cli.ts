@@ -45,14 +45,11 @@ export function parseArguments(args: string[]) {
   throw new Error('Unknown command')
 }
 
-export async function execCommand(originalCommand: string, cwd?: 'frontend' | 'backend' | 'cli') {
-  console.log(`Exec: ${originalCommand}`)
+export async function execCommand(originalCommand: string) {
+  console.log(`Exec: ${originalCommand} in ${Deno.cwd()}`)
   const [cmd, ...args] = originalCommand.split(' ')
 
-  const command = new Deno.Command(cmd, {
-    cwd: cwd ? `../${cwd}` : undefined,
-    args,
-  })
+  const command = new Deno.Command(cmd, {args, cwd: Deno.cwd()})
 
   const {code, stderr, stdout} = await command.output()
 
