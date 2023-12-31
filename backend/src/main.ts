@@ -19,8 +19,10 @@ app.get('/', c => c.json({}))
 app.get('/stats', async c => {
   const space = await getDiskInfo()
   const docker = await enabled()
+  const mode = flags.master ? 'master' : 'slave'
+  const version = '31.20.37'
 
-  return c.json({ip, ...space, docker})
+  return c.json({ip, mode, version, docker, ...space})
 })
 
 app.route('/api', api)
