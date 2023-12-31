@@ -1,5 +1,6 @@
 import {Env, ErrorHandler, HTTPException, Handler, Hono, checkDiskSpace, socketPath} from '../deps.ts'
 import {NotFound} from './database.ts'
+import {enabled} from './docker.ts'
 import {flags} from './flags.ts'
 
 export const handleError: ErrorHandler<Env> = (err, c) => {
@@ -98,3 +99,26 @@ export function requestIp(addr: Deno.Addr) {
 
   return (addr as Deno.UnixAddr).path
 }
+
+export const version = '01.02.16'
+
+export async function stats(ip: string) {
+  const space = await getDiskInfo()
+  const docker = await enabled()
+  const mode = flags.master ? 'master' : 'slave'
+  const master = mode === 'master'
+  const online = true
+
+  return {version, mode, ip, docker, master, online, ...space}
+}
+
+export const defaultStats = (ip: string) => ({
+  ip,
+  version,
+  mode: 'slave',
+  master: false,
+  online: false,
+  docker: false,
+  total: '0',
+  free: '0',
+})

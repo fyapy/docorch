@@ -6,16 +6,16 @@ import * as docker from '../../docker.ts'
 const CONTAINERS = '/containers'
 const LOCAL_CONTAINERS = '/local-containers'
 
+type Containers = Awaited<ReturnType<typeof docker.containers>>
+
 export default defineHandlers(api => {
   slaveRoute(api, {
     method: 'GET',
     url: LOCAL_CONTAINERS,
     async handle(c) {
       try {
-        const list = await docker.containers()
-        return c.json(list)
-      } catch (e) {
-        console.error(333, e)
+        return c.json(await docker.containers())
+      } catch {
         return c.json([])
       }
     },
@@ -24,22 +24,20 @@ export default defineHandlers(api => {
   masterRoute(api, {
     method: 'GET',
     url: CONTAINERS,
-    handle: async c => {
+    async handle(c) {
       const responses = await Promise.all(ServerModel.select().map(({ip: serverIp}) => {
         if (serverIp === ip) {
           try {
             return docker.containers()
-          } catch (e) {
-            console.error(1, e)
-            return []
+          } catch {
+            return [] as Containers
           }
         }
 
         try {
-          return callNode<ReturnType<typeof docker.containers>>(serverIp, LOCAL_CONTAINERS)
-        } catch (e) {
-          console.error(2, e)
-          return []
+          return callNode<Containers>(serverIp, LOCAL_CONTAINERS)
+        } catch {
+          return [] as Containers
         }
       }))
 

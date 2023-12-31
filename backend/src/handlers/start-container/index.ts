@@ -6,20 +6,16 @@ import * as docker from '../../docker.ts'
 const START_CONTAINER = '/start-container'
 const LOCAL_START_CONTAINER = '/local-start-container'
 
-function runStartContainer(dockerId: string | null) {
-  if (dockerId) {
-    return docker.startContainer(dockerId)
-  }
-}
+const startContainer = (dockerId: string | null) => dockerId && docker.startContainer(dockerId)
 
 export default defineHandlers(api => {
   slaveRoute(api, {
     method: 'POST',
     url: LOCAL_START_CONTAINER,
-    handle: async c => {
+    async handle(c) {
       const {dockerId} = await c.req.json<{dockerId: string}>()
 
-      await runStartContainer(dockerId)
+      await startContainer(dockerId)
 
       return c.json({success: Boolean(dockerId)})
     },
@@ -28,13 +24,13 @@ export default defineHandlers(api => {
   masterRoute(api, {
     method: 'POST',
     url: START_CONTAINER,
-    handle: async c => {
+    async handle(c) {
       const body = await c.req.json<{id: string}>()
 
       const {serverIp, dockerId} = ContainerModel.selectBy('id', body.id)
 
       if (serverIp === ip) {
-        await runStartContainer(dockerId)
+        await startContainer(dockerId)
         return c.json({success: Boolean(dockerId)})
       }
 

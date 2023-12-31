@@ -17,7 +17,8 @@ interface CreateContainerInput {
   args: string[]
 }
 
-async function runLocalContainer(body: CreateContainerInput) {
+type Container = Awaited<ReturnType<typeof createContainer>>
+async function createContainer(body: CreateContainerInput) {
   const hasImage = await docker.imageExists(body.image)
   if (!hasImage) {
     await docker.pullImage(body.image)
@@ -37,22 +38,22 @@ export default defineHandlers(api => {
   slaveRoute(api, {
     method: 'POST',
     url: LOCAL_RUN_CONTAINER,
-    handle: async c => {
+    async handle(c) {
       const body = await c.req.json<CreateContainerInput>()
 
-      return c.json(await runLocalContainer(body))
+      return c.json(await createContainer(body))
     },
   })
 
   masterRoute(api, {
     method: 'POST',
     url: RUN_CONTAINER,
-    handle: async c => {
+    async handle(c) {
       const body = await c.req.json<CreateContainerInput>()
 
       const {dockerId} = body.serverIp === ip
-        ? await runLocalContainer(body)
-        : await callNode<ReturnType<typeof runLocalContainer>>(body.serverIp, LOCAL_RUN_CONTAINER, nodePost(body))
+        ? await createContainer(body)
+        : await callNode<Container>(body.serverIp, LOCAL_RUN_CONTAINER, nodePost(body))
 
       const data = ContainerModel.insert({id: crypto.randomUUID(), dockerId, ...body})
 

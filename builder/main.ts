@@ -20,7 +20,7 @@ for (const file of frontendFiles) {
 await Deno.writeTextFile('../backend/ui.ts', uiFile)
 
 
-let mainFile = await Deno.readTextFile('../backend/src/main.ts')
+let utilsFile = await Deno.readTextFile('../backend/src/utils.ts')
 
 const date = new Date()
 const versionMask = /version = \'\d\d\.\d\d\.\d\d\'/gm
@@ -30,9 +30,9 @@ const version = [
   normalizeDate(date.getMinutes()),
 ].join('.')
 
-mainFile = mainFile.replace(versionMask, `version = \'${version}\'`)
+utilsFile = utilsFile.replace(versionMask, `version = \'${version}\'`)
 
-await Deno.writeTextFile('../backend/src/main.ts', mainFile)
+await Deno.writeTextFile('../backend/src/utils.ts', utilsFile)
 
 
 console.log('Backend build start')

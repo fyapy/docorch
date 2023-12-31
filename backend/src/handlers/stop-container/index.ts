@@ -6,20 +6,16 @@ import * as docker from '../../docker.ts'
 const STOP_CONTAINER = '/stop-container'
 const LOCAL_STOP_CONTAINER = '/local-stop-container'
 
-function runStopContainer(dockerId: string | null) {
-  if (dockerId) {
-    return docker.stopContainer(dockerId)
-  }
-}
+const stopContainer = (dockerId: string | null) => dockerId && docker.stopContainer(dockerId)
 
 export default defineHandlers(api => {
   slaveRoute(api, {
     method: 'POST',
     url: LOCAL_STOP_CONTAINER,
-    handle: async c => {
+    async handle(c) {
       const {dockerId} = await c.req.json<{dockerId: string}>()
 
-      await runStopContainer(dockerId)
+      await stopContainer(dockerId)
 
       return c.json({success: Boolean(dockerId)})
     },
@@ -28,13 +24,13 @@ export default defineHandlers(api => {
   masterRoute(api, {
     method: 'POST',
     url: STOP_CONTAINER,
-    handle: async c => {
+    async handle(c) {
       const body = await c.req.json<{id: string}>()
 
       const {serverIp, dockerId} = ContainerModel.selectBy('id', body.id)
 
       if (serverIp === ip) {
-        await runStopContainer(dockerId)
+        await stopContainer(dockerId)
         return c.json({success: Boolean(dockerId)})
       }
 
