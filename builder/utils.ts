@@ -52,3 +52,5 @@ export async function exists(filename: string) {
 export function fixJS(js: string) {
   return JSON.stringify(js.split('`'), null, 2) + ".join('`')"
 }
+
+export const normalizeDate = (date: number) => `${date}`.length === 1 ? `0${date}` : date

@@ -1,4 +1,4 @@
-import {execCommand, exists, filesList, fixJS} from './utils.ts'
+import {execCommand, exists, filesList, fixJS, normalizeDate} from './utils.ts'
 
 console.log('Frontend build start')
 await execCommand('pnpm build', 'frontend')
@@ -24,7 +24,11 @@ let mainFile = await Deno.readTextFile('../backend/src/main.ts')
 
 const date = new Date()
 const versionMask = /version = \'\d\d\.\d\d\.\d\d\'/gm
-const version = `${date.getDate()}.${date.getHours()}.${date.getMinutes()}`
+const version = [
+  normalizeDate(date.getDate()),
+  normalizeDate(date.getHours()),
+  normalizeDate(date.getMinutes()),
+].join('.')
 
 mainFile = mainFile.replace(versionMask, `version = \'${version}\'`)
 
@@ -37,7 +41,7 @@ if (await exists('../backend/docorch')) {
 }
 
 await execCommand('deno task build:linux', 'backend')
-console.log('Backend build finish')
+console.log(`Backend build finish, version ${version}`)
 
 
 console.log('Backend zip start')

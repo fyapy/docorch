@@ -10,7 +10,7 @@ if (flags.master && !ServerModel.exists('ip', ip)) {
   ServerModel.insert({ip})
 }
 
-const version = '0.22.1'
+const version = '01.00.55'
 const app = new Hono()
 
 app.onError(handleError)
