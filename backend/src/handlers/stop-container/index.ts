@@ -35,7 +35,7 @@ export default defineHandlers(api => {
 
       if (serverIp === ip) {
         await runStopContainer(dockerId)
-        return c.json({stoped: true})
+        return c.json({stoped: Boolean(dockerId)})
       }
 
       return c.json(await callNode(serverIp, LOCAL_STOP_CONTAINER, nodePost({dockerId})))
