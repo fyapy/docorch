@@ -20,7 +20,7 @@ app.get('/stats', async c => {
   const space = await getDiskInfo()
   const docker = await enabled()
   const mode = flags.master ? 'master' : 'slave'
-  const version = '31.20.37'
+  const version = '31.20.44'
 
   return c.json({ip, mode, version, docker, ...space})
 })
