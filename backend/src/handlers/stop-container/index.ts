@@ -33,7 +33,6 @@ export default defineHandlers(api => {
 
       const {serverIp, dockerId} = ContainerModel.selectBy('id', body.id)
 
-      return c.json({serverIp, dockerId})
       if (serverIp === ip) {
         await runStopContainer(dockerId)
         return c.json({success: Boolean(dockerId)})
