@@ -6,9 +6,9 @@ export async function execCommand(originalCommand: string, cwd?: 'frontend' | 'b
     args,
   })
 
-  const {stderr} = await command.output()
+  const {stdout} = await command.output()
 
-  return new TextDecoder().decode(stderr)
+  return new TextDecoder().decode(stdout)
 }
 
 export async function filesList(directory: string): Promise<string[]> {

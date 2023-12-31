@@ -38,7 +38,7 @@ export default defineHandlers(api => {
         return c.json({})
       }
 
-      await callNode(serverIp, STOP_CONTAINER, nodePost(body))
+      await callNode(serverIp, LOCAL_STOP_CONTAINER, nodePost({dockerId}))
       return c.json({})
     },
   })
