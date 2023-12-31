@@ -21,7 +21,7 @@ export default defineHandlers(api => {
 
       await runStopContainer(dockerId)
 
-      return c.json({stoped: Boolean(dockerId)})
+      return c.json({success: Boolean(dockerId)})
     },
   })
 
@@ -33,9 +33,10 @@ export default defineHandlers(api => {
 
       const {serverIp, dockerId} = ContainerModel.selectBy('id', body.id)
 
+      return c.json({serverIp, dockerId})
       if (serverIp === ip) {
         await runStopContainer(dockerId)
-        return c.json({stoped: Boolean(dockerId)})
+        return c.json({success: Boolean(dockerId)})
       }
 
       return c.json(await callNode(serverIp, LOCAL_STOP_CONTAINER, nodePost({dockerId})))
