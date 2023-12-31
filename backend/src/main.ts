@@ -10,6 +10,7 @@ if (flags.master && !ServerModel.exists('ip', ip)) {
   ServerModel.insert({ip})
 }
 
+const version = '0.22.1'
 const app = new Hono()
 
 app.onError(handleError)
@@ -20,7 +21,6 @@ app.get('/stats', async c => {
   const space = await getDiskInfo()
   const docker = await enabled()
   const mode = flags.master ? 'master' : 'slave'
-  const version = '31.20.44'
 
   return c.json({ip, mode, version, docker, ...space})
 })
@@ -31,7 +31,9 @@ if (flags.master) {
   ui(app)
 }
 
-Deno.serve(
-  {port: 4545},
-  (req, info) => app.fetch(req, {ip: requestIp(info.remoteAddr)}),
-)
+Deno.serve({
+  port: 4545,
+  onListen({hostname, port}) {
+    console.log(`Listening on http://${hostname}:${port}/ version ${version}`)
+  },
+}, (req, info) => app.fetch(req, {ip: requestIp(info.remoteAddr)}))

@@ -6,9 +6,17 @@ export async function execCommand(originalCommand: string, cwd?: 'frontend' | 'b
     args,
   })
 
-  const {stdout} = await command.output()
+  const {code, stderr, stdout} = await command.output()
 
-  return new TextDecoder().decode(stdout)
+  const error = new TextDecoder().decode(stderr)
+  const out = new TextDecoder().decode(stdout)
+  const output = {code, error, out}
+
+  if (code === 0) {
+    return output
+  }
+
+  throw new Error(JSON.stringify(output))
 }
 
 export async function filesList(directory: string): Promise<string[]> {
@@ -41,18 +49,6 @@ export async function exists(filename: string) {
   }
 }
 
-type RunCommand = {
-  args: string[]
-  cwd: string
-  showError?: boolean
-}
-export async function runCommand(cmd: string, {args, cwd, showError = true}: RunCommand) {
-  const command = new Deno.Command(cmd, {args, cwd: `../${cwd}`})
-  const {stdout, stderr} = await command.output()
-
-  if (showError && stderr.length) {
-    throw new TextDecoder().decode(stderr)
-  }
-
-  return new TextDecoder().decode(stdout)
+export function fixJS(js: string) {
+  return JSON.stringify(js.split('`'), null, 2) + ".join('`')"
 }

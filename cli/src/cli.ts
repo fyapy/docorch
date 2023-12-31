@@ -54,7 +54,15 @@ export async function execCommand(originalCommand: string, cwd?: 'frontend' | 'b
     args,
   })
 
-  const {stdout} = await command.output()
+  const {code, stderr, stdout} = await command.output()
 
-  return new TextDecoder().decode(stdout)
+  const error = new TextDecoder().decode(stderr)
+  const out = new TextDecoder().decode(stdout)
+  const output = {code, error, out}
+
+  if (code === 0) {
+    return output
+  }
+
+  throw new Error(JSON.stringify(output))
 }
