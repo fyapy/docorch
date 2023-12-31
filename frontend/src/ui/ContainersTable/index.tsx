@@ -84,6 +84,7 @@ export const ContainersTable = observer(({list, servers, pendings, action}: Cont
               <th></th>
               <th></th>
               <th></th>
+              <th></th>
               <th>1-{list.length} of {list.length}</th>
             </tr>
           </tfoot>
