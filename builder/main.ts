@@ -1,7 +1,10 @@
-import {execCommand, exists, filesList} from './utils.ts'
+import {execCommand, runCommand, exists, filesList} from './utils.ts'
 
 console.log('Frontend build start')
-await execCommand('pnpm build', 'frontend')
+await runCommand('pnpm', {
+  args: ['build'],
+  cwd: 'frontend',
+})
 console.log('Frontend builded')
 
 

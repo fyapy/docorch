@@ -34,14 +34,19 @@ export function parseArguments(args: string[]) {
     throw new Error('Provide master/slave flag')
   }
 
+  if (flags._.includes('service:update')) {
+    return {cmd: Command.ServiceUpdate, meta: {}}
+  }
+
   if (flags._.includes('service:remove')) {
     return {cmd: Command.ServiceRemove, meta: {}}
   }
 
-  throw new Error('Unknown error')
+  throw new Error('Unknown command')
 }
 
 export async function execCommand(originalCommand: string, cwd?: 'frontend' | 'backend' | 'cli') {
+  console.log(`Exec: ${originalCommand}`)
   const [cmd, ...args] = originalCommand.split(' ')
 
   const command = new Deno.Command(cmd, {

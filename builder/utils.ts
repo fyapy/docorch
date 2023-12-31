@@ -40,3 +40,19 @@ export async function exists(filename: string) {
     }
   }
 }
+
+type RunCommand = {
+  args: string[]
+  cwd: string
+  showError?: boolean
+}
+export async function runCommand(cmd: string, {args, cwd, showError = true}: RunCommand) {
+  const command = new Deno.Command(cmd, {args, cwd: `../${cwd}`})
+  const {stdout, stderr} = await command.output()
+
+  if (showError && stderr.length) {
+    throw new TextDecoder().decode(stderr)
+  }
+
+  return new TextDecoder().decode(stdout)
+}

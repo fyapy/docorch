@@ -1,5 +1,6 @@
 import {Command, execCommand, parseArguments} from './cli.ts'
-import {fs, os} from '../deps.ts'
+import {download, fs, os} from '../deps.ts'
+import {fileRemoveSync} from './utils.ts'
 
 const command = parseArguments(Deno.args)
 
@@ -7,19 +8,15 @@ if (command.cmd === Command.Ping) {
   console.log('pong')
 }
 
+const isLinux = os.platform() === 'linux'
 const serviceName = 'docorch.service'
 const servicePath = `/etc/systemd/system/${serviceName}`
 
 if (command.cmd === Command.ServiceRemove) {
-  console.log(`Exec: systemctl stop ${serviceName}`)
   await execCommand(`systemctl stop ${serviceName}`)
 
-  if (fs.existsSync(servicePath)) {
-    Deno.removeSync(servicePath)
-  }
-  console.log(`Removed ${servicePath}`)
+  fileRemoveSync(servicePath)
 
-  console.log(`Exec: systemctl daemon-reload`)
   await execCommand(`systemctl daemon-reload`)
 
   console.log(`${serviceName} successfully removed`)
@@ -50,13 +47,11 @@ if (command.cmd === Command.ServiceInit) {
       'WantedBy=multi-user.target',
     ].join('\n')
 
-    if (os.platform() === 'linux') {
+    if (isLinux) {
       Deno.writeTextFileSync(servicePath, service)
       console.log(`Created ${servicePath}`)
-      
-      console.log(`Exec: systemctl enable ${serviceName}`)
+
       await execCommand(`systemctl enable ${serviceName}`)
-      console.log(`Exec: systemctl start ${serviceName}`)
       await execCommand(`systemctl start ${serviceName}`)
 
       console.log(`${serviceName} successfully started`)
@@ -67,4 +62,22 @@ if (command.cmd === Command.ServiceInit) {
 }
 
 if (command.cmd === Command.ServiceUpdate) {
+  isLinux && await execCommand(`sudo apt install unzip -y`)
+
+  fileRemoveSync(`${Deno.cwd()}/docorch.zip`)
+
+  console.log('Update downloading')
+  const docorchZipUrl = 'https://github.com/fyapy/docorch/raw/master/backend/docorch.zip'
+  await download(docorchZipUrl, {file: './docorch.zip', dir: Deno.cwd()})
+  console.log('Update downloaded')
+
+  isLinux && await execCommand(`systemctl stop ${serviceName}`)
+  fileRemoveSync(`${Deno.cwd()}/docorch`)
+
+  await execCommand(`unzip docorch.zip`)
+  await execCommand(`chmod +x ./docorch`)
+  await execCommand(`systemctl daemon-reload`)
+  isLinux && await execCommand(`systemctl start ${serviceName}`)
+
+  console.log(`${serviceName} successfully updated`)
 }
