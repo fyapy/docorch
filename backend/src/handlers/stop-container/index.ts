@@ -35,11 +35,10 @@ export default defineHandlers(api => {
 
       if (serverIp === ip) {
         await runStopContainer(dockerId)
-        return c.json({})
+        return c.json({stoped: true})
       }
 
-      await callNode(serverIp, LOCAL_STOP_CONTAINER, nodePost({dockerId}))
-      return c.json({})
+      return c.json(await callNode(serverIp, LOCAL_STOP_CONTAINER, nodePost({dockerId})))
     },
   })
 })
