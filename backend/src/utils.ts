@@ -100,7 +100,7 @@ export function requestIp(addr: Deno.Addr) {
   return (addr as Deno.UnixAddr).path
 }
 
-export const version = '02.02.19'
+export const version = '02.02.43'
 
 export async function stats(ip: string) {
   const space = await getDiskInfo()
