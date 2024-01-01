@@ -6,7 +6,7 @@ curl -sSL https://github.com/fyapy/docorch/raw/master/cli/docli.zip -o /var/www/
 
 apt install unzip -y
 
-unzip /var/www/docli.zip
+unzip /var/www/docli.zip -d /var/www
 chmod +x /var/www/docli
 
 ls /var/www
