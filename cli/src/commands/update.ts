@@ -5,6 +5,8 @@ import {execCommand} from '../cli.ts'
 export async function updateCommand() {
   isLinux && await execCommand(`apt install unzip -y`)
 
+  fileRemoveSync(`${cwd}/backend.zip`)
+
   console.log('Backend download start')
   await download(backendZipUrl, {file: './backend.zip', dir: cwd})
   console.log('Backend download finish')

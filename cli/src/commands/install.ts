@@ -38,9 +38,6 @@ export async function installCommand(meta: {slave?: string; master?: string}) {
     await execCommand(`chmod +x ./backend`)
     fileRemoveSync(`${cwd}/backend.zip`)
 
-    await execCommand('curl -sSL https://get.docker.com | sh')
-    await execCommand('sudo usermod -aG docker $(whoami)')
-
     Deno.writeTextFileSync(servicePath, service)
     console.log(`Created ${servicePath}`)
 
