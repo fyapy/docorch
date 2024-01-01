@@ -1,4 +1,4 @@
-import {flags, debug} from './flags.ts'
+import {flags} from './flags.ts'
 import {fs, path} from '../deps.ts'
 
 const DATA_DIR = `${Deno.cwd()}/docorch-data`
@@ -28,7 +28,6 @@ function createTable<T extends Record<string, any>>({name}: CreateTableProps) {
 
   function select() {
     if (flags.slave) {
-      debug('database method select called')
       return []
     }
 
@@ -37,7 +36,6 @@ function createTable<T extends Record<string, any>>({name}: CreateTableProps) {
 
   function selectBy(key: keyof T, value: T[keyof T]): T {
     if (flags.slave) {
-      debug('database method selectBy called')
       throw new NotFound()
     }
 
@@ -51,7 +49,6 @@ function createTable<T extends Record<string, any>>({name}: CreateTableProps) {
 
   function insert(newRow: T) {
     if (flags.slave) {
-      debug('database method insert called')
       return
     }
 
@@ -62,7 +59,6 @@ function createTable<T extends Record<string, any>>({name}: CreateTableProps) {
 
   function update(key: keyof T, value: T[keyof T], set: Partial<T>) {
     if (flags.slave) {
-      debug('database method update called')
       return data
     }
 
@@ -78,7 +74,6 @@ function createTable<T extends Record<string, any>>({name}: CreateTableProps) {
 
   function remove(key: keyof T, value: T[keyof T]) {
     if (flags.slave) {
-      debug('database method remove called')
       return data
     }
 
@@ -88,7 +83,6 @@ function createTable<T extends Record<string, any>>({name}: CreateTableProps) {
 
   function exists(key: keyof T, value: T[keyof T]) {
     if (flags.slave) {
-      debug('database method exists called')
       return false
     }
 

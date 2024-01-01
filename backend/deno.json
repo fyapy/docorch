@@ -2,8 +2,8 @@
   "lock": true,
   "nodeModulesDir": true,
   "tasks": {
-    "dev:master": "deno run --watch --unstable -A ./src/main.ts --master=hono:123",
-    "dev:slave": "deno run --watch --unstable -A ./src/main.ts --slave=5.4.145.90",
+    "dev:master": "MASTER=login:password deno run --watch --unstable -A ./src/main.ts",
+    "dev:slave": "SLAVE=5.4.145.90 deno run --watch --unstable -A ./src/main.ts",
     "build:mac": "deno compile --unstable -A --target x86_64-apple-darwin --output backend ./src/main.ts",
     "build:linux": "deno compile --unstable -A --target x86_64-unknown-linux-gnu --output backend ./src/main.ts"
   },

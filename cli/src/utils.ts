@@ -1,4 +1,4 @@
-import {fs} from '../deps.ts'
+import {fs, os} from '../deps.ts'
 
 export function fileRemoveSync(path: string) {
   if (fs.existsSync(path)) {
@@ -9,4 +9,11 @@ export function fileRemoveSync(path: string) {
 
 export const cwd = '/etc/docorch'
 
-export const version = '01.23.48'
+export const version = '02.02.19'
+
+export const isLinux = os.platform() === 'linux'
+
+export const serviceName = 'docorch.service'
+export const servicePath = `/etc/systemd/system/${serviceName}`
+
+export const backendZipUrl = 'https://github.com/fyapy/docorch/raw/master/backend/backend.zip'

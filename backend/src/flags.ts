@@ -1,30 +1,12 @@
-import {parse} from '../deps.ts'
-
 export interface FollowDTO {
   success: boolean
   message: string
 }
 
-interface Flags {
-  master?: string
-  slave?: string
-  debug?: boolean
+export const flags = {
+  master: Deno.env.get('MASTER'),
+  slave: Deno.env.get('SLAVE'),
 }
-
-export const flags = parse<Flags>(Deno.args)
-
-const envMaster = Deno.env.get('master')
-if (envMaster) {
-  flags.master = envMaster
-}
-
-const envSlave = Deno.env.get('slave')
-if (envSlave) {
-  flags.slave = envSlave
-}
-
-export const debug = flags.debug ? console.log : () => {}
-
 
 if (flags.master) {
   const [username, password] = flags.master.split(':')

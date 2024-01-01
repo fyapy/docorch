@@ -3,9 +3,9 @@ import {cwd} from './utils.ts'
 
 export enum Command {
   Version = 'version',
+  Install = 'install',
   Remove = 'remove',
   Update = 'update',
-  Init = 'init',
   Ping = 'ping',
 }
 
@@ -24,7 +24,7 @@ export function parseArguments(args: string[]) {
     return {cmd: Command.Version, meta: {}}
   }
 
-  if (flags._.includes('init')) {
+  if (flags._.includes('install')) {
     if (flags.master) {
       const [username, password] = flags.master?.split(':') || []
 
@@ -32,10 +32,10 @@ export function parseArguments(args: string[]) {
         throw new Error('Master flag username and password incorrect')
       }
 
-      return {cmd: Command.Init, meta: {master: flags.master}}
+      return {cmd: Command.Install, meta: {master: flags.master}}
     }
     if (flags.slave) {
-      return {cmd: Command.Init, meta: {slave: flags.slave}}
+      return {cmd: Command.Install, meta: {slave: flags.slave}}
     }
 
     throw new Error('Provide master/slave flag')
