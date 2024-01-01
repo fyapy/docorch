@@ -2,20 +2,26 @@ import {parseArgs} from '../deps.ts'
 import {cwd} from './utils.ts'
 
 export enum Command {
-  Init = 'init',
+  Version = 'version',
   Remove = 'remove',
   Update = 'update',
+  Init = 'init',
   Ping = 'ping',
 }
 
 export function parseArguments(args: string[]) {
   const flags = parseArgs<{
+    version?: string | boolean
     master?: string
     slave?: string
   }>(args)
 
   if (flags._.includes('ping')) {
     return {cmd: Command.Ping, meta: {}}
+  }
+
+  if (flags._.includes('version')) {
+    return {cmd: Command.Version, meta: {}}
   }
 
   if (flags._.includes('init')) {

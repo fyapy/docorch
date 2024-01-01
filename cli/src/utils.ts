@@ -7,6 +7,6 @@ export function fileRemoveSync(path: string) {
   console.log(`Removed ${path}`)
 }
 
-export const cwd = '/var/www'
+export const cwd = '/etc/docorch'
 
-export const version = '01.22.18'
+export const version = '01.23.48'

@@ -2,4 +2,5 @@
 /docorch-data
 .DS_Store
 docorch
+backend
 ui.ts

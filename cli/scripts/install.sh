@@ -1,10 +1,10 @@
 #!/bin/sh
-curl -sSL https://github.com/fyapy/docorch/raw/master/cli/docli.zip -o /var/www/docli.zip
+curl -sSL https://github.com/fyapy/docorch/raw/master/cli/docorch.zip -o /etc/docorch/docorch.zip
 
 apt install unzip -y
 
-unzip /var/www/docli.zip -d /var/www
-chmod +x /var/www/docli
+unzip /etc/docorch/docorch.zip -d /etc/docorch
+chmod +x /etc/docorch/docorch
 
-rm -rf /var/www/docli.zip
-mv -f /var/www/docli /usr/bin/docli
+rm -rf /etc/docorch/docorch.zip
+mv -f /etc/docorch/docorch /usr/bin/docorch

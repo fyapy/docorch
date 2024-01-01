@@ -25,22 +25,22 @@ await updateVersion('../backend/src/utils.ts', version)
 await updateVersion('../cli/src/utils.ts', version)
 
 console.log('Backend build start')
-await fileRemove('../backend/docorch')
+await fileRemove('../backend/backend')
 
 await execCommand('deno task build:linux', 'backend')
 console.log(`Backend build finish, version ${version}`)
 
 
 console.log('Backend zip start')
-await execCommand('zip docorch.zip docorch', 'backend')
+await execCommand('zip backend.zip backend', 'backend')
 console.log('Backend zip finish')
 
 console.log('CLI build start')
-await fileRemove('../cli/docli')
+await fileRemove('../cli/docorch')
 
 await execCommand('deno task build:linux', 'cli')
 console.log(`CLI build finish, version ${version}`)
 
 console.log('CLI zip start')
-await execCommand('zip docli.zip docli', 'cli')
+await execCommand('zip docorch.zip docorch', 'cli')
 console.log('CLI zip finish')

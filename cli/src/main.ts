@@ -1,11 +1,16 @@
 import {Command, execCommand, parseArguments} from './cli.ts'
 import {cwd, fileRemoveSync} from './utils.ts'
+import {backendCommand} from './commands/version.ts'
 import {download, fs, os} from '../deps.ts'
 
 const command = parseArguments(Deno.args)
 
 if (command.cmd === Command.Ping) {
   console.log('pong')
+}
+
+if (command.cmd === Command.Version) {
+  await backendCommand()
 }
 
 const isLinux = os.platform() === 'linux'
@@ -28,20 +33,20 @@ if (command.cmd === Command.Init) {
   } else {
     const service = [
       '[Unit]',
-      'Description=Docorch deamon',
+      'Description=Docorch backend',
       'After=network.target',
       '',
       '[Service]',
       command.meta.slave
         ? `Environment="slave=${command.meta.slave}"`
         : `Environment="master=${command.meta.master}"`,
-      `ExecStart=/var/www/docorch`,
-      'WorkingDirectory=/var/www',
+      `ExecStart=/etc/docorch/backend`,
+      'WorkingDirectory=/etc/docorch',
       'Restart=always',
       'RestartSec=10',
       'StandardOutput=syslog',
       'StandardError=syslog',
-      'SyslogIdentifier=docorch-deamon',
+      'SyslogIdentifier=docorch-backend',
       '',
       '[Install]',
       'WantedBy=multi-user.target',
@@ -64,18 +69,18 @@ if (command.cmd === Command.Init) {
 if (command.cmd === Command.Update) {
   isLinux && await execCommand(`apt install unzip -y`)
 
-  fileRemoveSync(`${cwd}/docorch.zip`)
+  fileRemoveSync(`${cwd}/backend.zip`)
 
   console.log('Update downloading')
-  const docorchZipUrl = 'https://github.com/fyapy/docorch/raw/master/backend/docorch.zip'
-  await download(docorchZipUrl, {file: './docorch.zip', dir: cwd})
+  const docorchZipUrl = 'https://github.com/fyapy/docorch/raw/master/backend/backend.zip'
+  await download(docorchZipUrl, {file: './backend.zip', dir: cwd})
   console.log('Update downloaded')
 
   isLinux && await execCommand(`systemctl stop ${serviceName}`)
-  fileRemoveSync(`${cwd}/docorch`)
+  fileRemoveSync(`${cwd}/backend`)
 
-  await execCommand(`unzip docorch.zip`)
-  await execCommand(`chmod +x ./docorch`)
+  await execCommand(`unzip backend.zip`)
+  await execCommand(`chmod +x ./backend`)
   await execCommand(`systemctl daemon-reload`)
   isLinux && await execCommand(`systemctl start ${serviceName}`)
 

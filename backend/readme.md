@@ -1,15 +1,15 @@
 Run on server as master:
 
 ```bash
-chmod +x ./docorch
-./docorch --master=login:password
+chmod +x ./backend
+./backend --master=login:password
 ```
 
 Run on server:
 
 ```bash
-chmod +x ./docorch
-./docorch --slave=masterIp
+chmod +x ./backend
+./backend --slave=masterIp
 ```
 
 Run production on localhost:
