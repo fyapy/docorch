@@ -12,7 +12,7 @@ const isLinux = os.platform() === 'linux'
 const serviceName = 'docorch.service'
 const servicePath = `/etc/systemd/system/${serviceName}`
 
-if (command.cmd === Command.ServiceRemove) {
+if (command.cmd === Command.Remove) {
   await execCommand(`systemctl stop ${serviceName}`)
 
   fileRemoveSync(servicePath)
@@ -22,7 +22,7 @@ if (command.cmd === Command.ServiceRemove) {
   console.log(`${serviceName} successfully removed`)
 }
 
-if (command.cmd === Command.ServiceInit) {
+if (command.cmd === Command.Init) {
   if (fs.existsSync(servicePath)) {
     console.error(`Service already exists ${servicePath}`)
   } else {
@@ -34,7 +34,7 @@ if (command.cmd === Command.ServiceInit) {
       '[Service]',
       command.meta.slave
         ? `Environment="slave=${command.meta.slave}"`
-        : `Environment="master=${command.meta.username}:${command.meta.password}"`,
+        : `Environment="master=${command.meta.master}"`,
       `ExecStart=/var/www/docorch`,
       'WorkingDirectory=/var/www',
       'Restart=always',
@@ -61,7 +61,7 @@ if (command.cmd === Command.ServiceInit) {
   }
 }
 
-if (command.cmd === Command.ServiceUpdate) {
+if (command.cmd === Command.Update) {
   isLinux && await execCommand(`apt install unzip -y`)
 
   fileRemoveSync(`${cwd}/docorch.zip`)

@@ -49,8 +49,31 @@ export async function exists(filename: string) {
   }
 }
 
+export async function fileRemove(path: string) {
+  if (await exists(path)) {
+    await Deno.remove(path)
+  }
+}
+
 export function fixJS(js: string) {
   return JSON.stringify(js.split('`'), null, 2) + ".join('`')"
 }
 
 export const normalizeDate = (date: number) => `${date}`.length === 1 ? `0${date}` : date
+
+export async function updateVersion(filePath: string, version: string) {
+  const file = await Deno.readTextFile(filePath)
+
+  const versionMask = /version = \'\d\d\.\d\d\.\d\d\'/gm
+
+  await Deno.writeTextFile(filePath, file.replace(versionMask, `version = \'${version}\'`))
+}
+
+export function newVersion() {
+  const date = new Date()
+  return [
+    normalizeDate(date.getDate()),
+    normalizeDate(date.getHours()),
+    normalizeDate(date.getMinutes()),
+  ].join('.')
+}

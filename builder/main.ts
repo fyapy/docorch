@@ -1,4 +1,6 @@
-import {execCommand, exists, filesList, fixJS, normalizeDate} from './utils.ts'
+import {execCommand, fileRemove, filesList, fixJS, newVersion, updateVersion} from './utils.ts'
+
+const version = newVersion()
 
 console.log('Frontend build start')
 await execCommand('pnpm build', 'frontend')
@@ -19,26 +21,11 @@ for (const file of frontendFiles) {
 
 await Deno.writeTextFile('../backend/ui.ts', uiFile)
 
-
-let utilsFile = await Deno.readTextFile('../backend/src/utils.ts')
-
-const date = new Date()
-const versionMask = /version = \'\d\d\.\d\d\.\d\d\'/gm
-const version = [
-  normalizeDate(date.getDate()),
-  normalizeDate(date.getHours()),
-  normalizeDate(date.getMinutes()),
-].join('.')
-
-utilsFile = utilsFile.replace(versionMask, `version = \'${version}\'`)
-
-await Deno.writeTextFile('../backend/src/utils.ts', utilsFile)
-
+await updateVersion('../backend/src/utils.ts', version)
+await updateVersion('../cli/src/utils.ts', version)
 
 console.log('Backend build start')
-if (await exists('../backend/docorch')) {
-  await Deno.remove('../backend/docorch')
-}
+await fileRemove('../backend/docorch')
 
 await execCommand('deno task build:linux', 'backend')
 console.log(`Backend build finish, version ${version}`)
@@ -48,3 +35,12 @@ console.log('Backend zip start')
 await execCommand('zip docorch.zip docorch', 'backend')
 console.log('Backend zip finish')
 
+console.log('CLI build start')
+await fileRemove('../cli/docli')
+
+await execCommand('deno task build:linux', 'cli')
+console.log(`CLI build finish, version ${version}`)
+
+console.log('CLI zip start')
+await execCommand('zip docli.zip docli', 'cli')
+console.log('CLI zip finish')

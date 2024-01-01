@@ -2,9 +2,9 @@ import {parseArgs} from '../deps.ts'
 import {cwd} from './utils.ts'
 
 export enum Command {
-  ServiceInit = 'service init',
-  ServiceRemove = 'service remove',
-  ServiceUpdate = 'service update',
+  Init = 'init',
+  Remove = 'remove',
+  Update = 'update',
   Ping = 'ping',
 }
 
@@ -18,7 +18,7 @@ export function parseArguments(args: string[]) {
     return {cmd: Command.Ping, meta: {}}
   }
 
-  if (flags._.includes('service:init')) {
+  if (flags._.includes('init')) {
     if (flags.master) {
       const [username, password] = flags.master?.split(':') || []
 
@@ -26,21 +26,21 @@ export function parseArguments(args: string[]) {
         throw new Error('Master flag username and password incorrect')
       }
 
-      return {cmd: Command.ServiceInit, meta: {username, password}}
+      return {cmd: Command.Init, meta: {master: flags.master}}
     }
     if (flags.slave) {
-      return {cmd: Command.ServiceInit, meta: {slave: flags.slave}}
+      return {cmd: Command.Init, meta: {slave: flags.slave}}
     }
 
     throw new Error('Provide master/slave flag')
   }
 
-  if (flags._.includes('service:update')) {
-    return {cmd: Command.ServiceUpdate, meta: {}}
+  if (flags._.includes('update')) {
+    return {cmd: Command.Update, meta: {}}
   }
 
-  if (flags._.includes('service:remove')) {
-    return {cmd: Command.ServiceRemove, meta: {}}
+  if (flags._.includes('remove')) {
+    return {cmd: Command.Remove, meta: {}}
   }
 
   throw new Error('Unknown command')

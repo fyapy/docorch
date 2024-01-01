@@ -1,7 +1,4 @@
 #!/bin/sh
-# Run script:
-# sudo curl -sSL https://raw.githubusercontent.com/fyapy/docorch/master/cli/scripts/install.sh | sh
-
 curl -sSL https://github.com/fyapy/docorch/raw/master/cli/docli.zip -o /var/www/docli.zip
 
 apt install unzip -y

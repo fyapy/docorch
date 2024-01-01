@@ -8,3 +8,5 @@ export function fileRemoveSync(path: string) {
 }
 
 export const cwd = '/var/www'
+
+export const version = '01.22.18'
