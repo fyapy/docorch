@@ -20,7 +20,7 @@ export function parseArguments(args: string[]) {
     return {cmd: Command.Ping, meta: {}}
   }
 
-  if (flags._.includes('version')) {
+  if (flags._.includes('version') || flags.version) {
     return {cmd: Command.Version, meta: {}}
   }
 

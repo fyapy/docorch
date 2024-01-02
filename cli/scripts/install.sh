@@ -1,5 +1,5 @@
 #!/bin/sh
-mkdir /etc/docorch
+mkdir -p /etc/docorch
 curl -sSL https://github.com/fyapy/docorch/raw/master/cli/docorch.zip -o /etc/docorch/docorch.zip
 
 apt install unzip -y
