@@ -3,6 +3,7 @@ import {backendCommand} from './commands/version.ts'
 import {installCommand} from './commands/install.ts'
 import {updateCommand} from './commands/update.ts'
 import {Command, parseArguments} from './cli.ts'
+import { recreateCommand } from './commands/recreate.ts'
 
 const command = parseArguments(Deno.args)
 
@@ -24,4 +25,8 @@ if (command.cmd === Command.Install) {
 
 if (command.cmd === Command.Update) {
   await updateCommand()
+}
+
+if (command.cmd === Command.Recreate) {
+  await recreateCommand(command.meta as {name: string})
 }
