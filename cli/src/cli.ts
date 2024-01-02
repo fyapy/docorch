@@ -2,6 +2,7 @@ import {parseArgs} from '../deps.ts'
 import {cwd, exitProcess} from './utils.ts'
 
 export enum Command {
+  Recreate = 'recreate',
   Uninstall = 'uninstall',
   Install = 'install',
   Version = 'version',
@@ -47,6 +48,16 @@ export function parseArguments(args: string[]) {
 
   if (flags._.includes('uninstall')) {
     return {cmd: Command.Uninstall, meta: {}}
+  }
+
+  if (flags._.includes('recreate')) {
+    const name = flags._?.[1]
+
+    if (!name) {
+      exitProcess('Provide container name')
+    }
+
+    return {cmd: Command.Recreate, meta: {name}}
   }
 
   exitProcess('Unknown command')
