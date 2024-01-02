@@ -1,6 +1,8 @@
 import {exitProcess} from '../utils.ts'
 
 export async function recreateCommand({name}: {name: string}) {
+  console.log(`Starting recreate container with name = "${name}"`)
+
   const res = await fetch('http://localhost:4545/api/recreate-container', {
     body: JSON.stringify({name}),
     method: 'POST',
