@@ -1,5 +1,5 @@
 import {parseArgs} from '../deps.ts'
-import {cwd} from './utils.ts'
+import {cwd, exitProcess} from './utils.ts'
 
 export enum Command {
   Version = 'version',
@@ -29,7 +29,7 @@ export function parseArguments(args: string[]) {
       const [username, password] = flags.master?.split(':') || []
 
       if (!username || !password) {
-        throw new Error('Master flag username and password incorrect')
+        exitProcess('Master flag username and password incorrect')
       }
 
       return {cmd: Command.Install, meta: {master: flags.master}}
@@ -38,7 +38,7 @@ export function parseArguments(args: string[]) {
       return {cmd: Command.Install, meta: {slave: flags.slave}}
     }
 
-    throw new Error('Provide master/slave flag')
+    exitProcess('Provide master/slave flag')
   }
 
   if (flags._.includes('update')) {
@@ -49,7 +49,7 @@ export function parseArguments(args: string[]) {
     return {cmd: Command.Remove, meta: {}}
   }
 
-  throw new Error('Unknown command')
+  exitProcess('Unknown command')
 }
 
 export async function execCommand(originalCommand: string) {
@@ -68,5 +68,5 @@ export async function execCommand(originalCommand: string) {
     return output
   }
 
-  throw new Error(JSON.stringify(output))
+  exitProcess(`Execure command error: `, JSON.stringify(output))
 }
