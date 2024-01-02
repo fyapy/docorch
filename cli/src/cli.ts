@@ -2,9 +2,9 @@ import {parseArgs} from '../deps.ts'
 import {cwd, exitProcess} from './utils.ts'
 
 export enum Command {
-  Version = 'version',
+  Uninstall = 'uninstall',
   Install = 'install',
-  Remove = 'remove',
+  Version = 'version',
   Update = 'update',
   Ping = 'ping',
 }
@@ -45,8 +45,8 @@ export function parseArguments(args: string[]) {
     return {cmd: Command.Update, meta: {}}
   }
 
-  if (flags._.includes('remove')) {
-    return {cmd: Command.Remove, meta: {}}
+  if (flags._.includes('uninstall')) {
+    return {cmd: Command.Uninstall, meta: {}}
   }
 
   exitProcess('Unknown command')

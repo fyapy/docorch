@@ -2,6 +2,7 @@ type IconName =
   | 'play'
   | 'stop'
   | 'remove'
+  | 'restart'
 
 type IconProps = {
   name: IconName

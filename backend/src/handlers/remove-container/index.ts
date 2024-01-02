@@ -6,15 +6,16 @@ import * as docker from '../../docker.ts'
 const REMOVE_CONTAINER = '/remove-container'
 const LOCAL_REMOVE_CONTAINER = '/local-remove-container'
 
-async function removeContainer(dockerId: string | null) {
+type RemoveContainer = Awaited<ReturnType<typeof removeContainer>>
+export async function removeContainer(dockerId: string | null) {
   if (!dockerId) {
-    return
+    return {success: false}
   }
 
   const containers = await docker.containers()
   const container = containers.find(c => c.Id === dockerId)
   if (!container) {
-    return
+    return {success: false}
   }
 
   await docker.removeContainer(dockerId)
@@ -23,6 +24,8 @@ async function removeContainer(dockerId: string | null) {
   if (!containersWithSameImage) {
     await docker.removeImage(container.ImageID)
   }
+
+  return {success: true}
 }
 
 export default defineHandlers(api => {
@@ -34,7 +37,7 @@ export default defineHandlers(api => {
 
       await removeContainer(dockerId)
 
-      return c.json({deleted: Boolean(dockerId)})
+      return c.json({success: Boolean(dockerId)})
     },
   })
 
@@ -47,16 +50,18 @@ export default defineHandlers(api => {
       const {serverIp, dockerId} = ContainerModel.selectBy('id', body.id)
 
       if (serverIp === ip) {
-        await removeContainer(dockerId)
-        ContainerModel.remove('id', body.id)
-        return c.json({})
+        const res = await removeContainer(dockerId)
+        if (res.success) {
+          ContainerModel.remove('id', body.id)
+        }
+        return c.json(res)
       }
 
-      const res = await callNode<{deleted: boolean}>(serverIp, LOCAL_REMOVE_CONTAINER, nodePost({dockerId}))
-      if (res.deleted) {
+      const res = await callNode<RemoveContainer>(serverIp, LOCAL_REMOVE_CONTAINER, nodePost({dockerId}))
+      if (res.success) {
         ContainerModel.remove('id', body.id)
       }
-      return c.json({})
+      return c.json(res)
     },
   })
 })

@@ -1,5 +1,5 @@
 import {makeAutoObservable, runInAction} from 'mobx'
-import {RunContainerValues} from 'ui/RunContainer'
+import {CreateContainerValues} from 'ui/CreateContainer'
 import {navigate} from 'utils/router'
 import {Root} from 'logic/root'
 import http from 'utils/http'
@@ -24,18 +24,18 @@ export class ContainersStore {
       this.root.notifications.addAsyncError(e)
     }
   }
-  runContainer = async (values: RunContainerValues) => {
+  createContainer = async (values: CreateContainerValues) => {
     try {
-      await http.post('/api/run-container', values)
+      await http.post('/api/create-container', values)
       navigate('/')
     } catch (e) {
       this.root.notifications.addAsyncError(e)
     }
   }
-  containerAction = async (id: string, action: 'start' | 'stop' | 'remove') => {
+  containerAction = async (id: string, action: 'start' | 'stop' | 'remove' | 'recreate') => {
     this.pendingList.push(id)
     try {
-      await http.post(`/api/${action}-container`, {id})
+      await http.post(`/api/${action}-container`, action === 'recreate' ? {name: id} : {id})
       await this.fetchList()
     } catch (e) {
       this.root.notifications.addAsyncError(e)

@@ -19,7 +19,7 @@ type ContainersTableProps = {
 export const ContainersTable = observer(({list, servers, pendings, action}: ContainersTableProps) => (
   <>
     <Styled.Header>
-      <Link to="/run-container">Run Container</Link>
+      <Link to="/create-container">Create Container</Link>
     </Styled.Header>
 
     <ServersList list={servers} />
@@ -38,45 +38,43 @@ export const ContainersTable = observer(({list, servers, pendings, action}: Cont
             </tr>
           </thead>
           <tbody>
-            {list.map(row => (
-              <tr key={row.id}>
-                <td data-label="Name">{row.name}</td>
-                <td data-label="Server">{row.serverIp}</td>
-                <td data-label="Status" style={{minWidth: 120}}>
-                  <Styled.State data-state={row.docker?.state || 'exited'}>
-                    {row.docker?.state || 'docker container not found'}
-                  </Styled.State>
-                </td>
-                <td data-label="Image">{row.image}</td>
-                <td data-label="Ports" style={{minWidth: 80}}>{row.networks.map(port => `${port.static}:${port.to}`).join(', ')}</td>
-                <td>
-                  <Styled.BtnGroup>
-                    {row.docker?.state === 'exited' && (
-                      <Styled.Btn
-                        disabled={pendings.includes(row.id)}
-                        onClick={() => action(row.id, 'start')}
-                      >
-                        <Icon name="play" width="16" height="16" fill="#FFF" />
+            {list.map(row => {
+              const disabled = pendings.includes(row.id) || pendings.includes(row.name)
+
+              return (
+                <tr key={row.id}>
+                  <td data-label="Name">{row.name}</td>
+                  <td data-label="Server">{row.serverIp}</td>
+                  <td data-label="Status" style={{minWidth: 120}}>
+                    <Styled.State data-state={row.docker?.state || 'exited'}>
+                      {row.docker?.state || 'docker container not found'}
+                    </Styled.State>
+                  </td>
+                  <td data-label="Image">{row.image}</td>
+                  <td data-label="Ports" style={{minWidth: 80}}>{row.networks.map(port => `${port.static}:${port.to}`).join(', ')}</td>
+                  <td>
+                    <Styled.BtnGroup>
+                      {row.docker?.state === 'exited' && (
+                        <Styled.Btn disabled={disabled} onClick={() => action(row.id, 'start')}>
+                          <Icon name="play" width="16" height="16" fill="#FFF" />
+                        </Styled.Btn>
+                      )}
+                      {row.docker?.state === 'running' && (
+                        <Styled.Btn disabled={disabled} onClick={() => action(row.id, 'stop')}>
+                          <Icon name="stop" width="16" height="16" fill="#FFF" />
+                        </Styled.Btn>
+                      )}
+                      <Styled.Btn disabled={disabled} onClick={() => action(row.name, 'recreate')}>
+                        <Icon name="restart" width="16" height="16" fill="#FFF" />
                       </Styled.Btn>
-                    )}
-                    {row.docker?.state === 'running' && (
-                      <Styled.Btn
-                        disabled={pendings.includes(row.id)}
-                        onClick={() => action(row.id, 'stop')}
-                      >
-                        <Icon name="stop" width="16" height="16" fill="#FFF" />
+                      <Styled.Btn disabled={disabled} onClick={() => action(row.id, 'remove')}>
+                        <Icon name="remove" width="16" height="16" fill="#FFF" />
                       </Styled.Btn>
-                    )}
-                    <Styled.Btn
-                      disabled={pendings.includes(row.id)}
-                      onClick={() => action(row.id, 'remove')}
-                    >
-                      <Icon name="remove" width="16" height="16" fill="#FFF" />
-                    </Styled.Btn>
-                  </Styled.BtnGroup>
-                </td>
-              </tr>
-            ))}
+                    </Styled.BtnGroup>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
           <tfoot>
             <tr>

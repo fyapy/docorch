@@ -33,9 +33,7 @@ export async function imageRepeatableExists(image: string, repeats = 60, ms = 10
 export async function pullImage(name: string) {
   if (!name) throw new Error('pullImage name required!')
 
-  console.log(`Start pulling image ${name}`)
   await fetchUnix(`/images/create?fromImage=${encodeURIComponent(name)}`, post)
-  console.log(`Finish pulling image ${name}`)
 }
 
 export async function containers() {
