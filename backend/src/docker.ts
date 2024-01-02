@@ -124,3 +124,7 @@ export async function removeContainer(id: string) {
 
   await fetchUnix(`/containers/${id}?force=true`, {...post, method: 'DELETE'})
 }
+
+export async function removeImage(imageId: string) {
+  await fetchUnix(`/images/${imageId}?force=true`, {...post, method: 'DELETE'})
+}

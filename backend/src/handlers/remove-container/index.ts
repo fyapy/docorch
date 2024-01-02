@@ -6,7 +6,24 @@ import * as docker from '../../docker.ts'
 const REMOVE_CONTAINER = '/remove-container'
 const LOCAL_REMOVE_CONTAINER = '/local-remove-container'
 
-const removeContainer = (dockerId: string | null) => dockerId && docker.removeContainer(dockerId)
+async function removeContainer(dockerId: string | null) {
+  if (!dockerId) {
+    return
+  }
+
+  const containers = await docker.containers()
+  const container = containers.find(c => c.Id === dockerId)
+  if (!container) {
+    return
+  }
+
+  await docker.removeContainer(dockerId)
+
+  const containersWithSameImage = containers.some(c => c.ImageID === container.ImageID && container.Id !== dockerId)
+  if (!containersWithSameImage) {
+    await docker.removeImage(container.ImageID)
+  }
+}
 
 export default defineHandlers(api => {
   slaveRoute(api, {

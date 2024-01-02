@@ -55,7 +55,7 @@ export async function fileRemove(path: string) {
   }
 }
 
-export function fixJS(js: string) {
+export function escapeJS(js: string) {
   return JSON.stringify(js.split('`'), null, 2) + ".join('`')"
 }
 

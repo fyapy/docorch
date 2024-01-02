@@ -1,4 +1,4 @@
-import {execCommand, fileRemove, filesList, fixJS, newVersion, updateVersion} from './utils.ts'
+import {execCommand, fileRemove, filesList, escapeJS, newVersion, updateVersion} from './utils.ts'
 
 const version = newVersion()
 
@@ -13,7 +13,7 @@ let uiFile = await Deno.readTextFile('../backend/ui-template.ts')
 for (const file of frontendFiles) {
   const content = await Deno.readTextFile(file)
 
-  if (file.endsWith('.js')) uiFile = uiFile.replace('`<--js-->`', fixJS(content))
+  if (file.endsWith('.js')) uiFile = uiFile.replace('`<--js-->`', escapeJS(content))
   if (file.endsWith('.html')) uiFile = uiFile.replace('<--html-->', content)
   if (file.endsWith('.css')) uiFile = uiFile.replace('<--css-->', content)
   if (file.endsWith('.svg')) uiFile = uiFile.replace('<--svg-->', content)
