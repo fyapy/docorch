@@ -138,3 +138,11 @@ export interface Server {
   ip: string
 }
 export const ServerModel = createTable<Server>({name: 'servers'})
+
+export interface Host {
+  id: string
+
+  host: string
+  ip: string
+}
+export const HostModel = createTable<Host>({name: 'hosts'})

@@ -22,6 +22,11 @@ export const Header = styled.div`
   a {
     color: ${color.white};
   }
+  a:not(:first-child) {
+    margin-left: 30px;
+
+    font-size: 16px;
+  }
 `
 export const Content = styled.div`
   padding: 20px 60px;
