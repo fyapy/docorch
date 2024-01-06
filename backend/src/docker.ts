@@ -112,7 +112,7 @@ export async function createContainer({name, hostname, image, envs, networks, vo
         ...acc,
         `${item.host}:${item.inside}`,
       ]), []),
-      RestartPolicy: {Name: 'always', MaximumRetryCount: 0},
+      RestartPolicy: {Name: 'unless-stopped', MaximumRetryCount: 0},
     },
   }
 
