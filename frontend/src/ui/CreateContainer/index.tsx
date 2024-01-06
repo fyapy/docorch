@@ -59,7 +59,7 @@ export const CreateContainer = observer(() => {
     >
       {({handleSubmit, isSubmitting}) => (
         <Styled.Wrapper onSubmit={handleSubmit}>
-          <FieldText name="hostname" placeholder="Hostname" required />
+          <FieldText name="hostname" placeholder="Hostname" />
           <FieldRadio name="serverIp" placeholder="Server" options={servers.options} required />
           <FieldText name="name" placeholder="Name" required />
           <FieldText name="image" placeholder="Image" required />
