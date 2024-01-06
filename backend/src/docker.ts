@@ -80,6 +80,7 @@ export async function stopContainer(id: string) {
 }
 
 interface CreateContainerInput {
+  hostname?: string
   serverIp: string
   name: string
   image: string
@@ -89,11 +90,12 @@ interface CreateContainerInput {
   args: string[]
 }
 
-export async function createContainer({name, image, envs, networks, volumes, args}: CreateContainerInput) {
+export async function createContainer({name, hostname, image, envs, networks, volumes, args}: CreateContainerInput) {
   if (!name) throw new Error('createContainer name required!')
   if (!image) throw new Error('createContainer image required!')
 
   const body = {
+    Hostname: hostname,
     Cmd: args,
     Image: image,
     Env: envs.reduce<string[]>((acc, {k, v}) => ([...acc, `${k}=${v}`]), []),
@@ -110,6 +112,7 @@ export async function createContainer({name, image, envs, networks, volumes, arg
         ...acc,
         `${item.host}:${item.inside}`,
       ]), []),
+      RestartPolicy: {Name: 'always', MaximumRetryCount: 0},
     },
   }
 

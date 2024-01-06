@@ -8,6 +8,7 @@ const CREATE_CONTAINER = '/create-container'
 const LOCAL_CREATE_CONTAINER = '/local-create-container'
 
 interface CreateContainerInput {
+  hostname?: string
   serverIp: string
   name: string
   image: string

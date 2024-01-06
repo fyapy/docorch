@@ -10,6 +10,7 @@ import {useStore} from 'utils/hooks'
 import * as Styled from './styles'
 
 export interface CreateContainerValues {
+  hostname: string
   name: string
   serverIp: null | string
   image: string
@@ -27,6 +28,7 @@ export const CreateContainer = observer(() => {
   }, [])
 
   const initialValues = useMemo((): CreateContainerValues => ({
+    hostname: '',
     name: 'nginx',
     serverIp: servers.options.length
       ? servers.options[0].value
@@ -57,6 +59,7 @@ export const CreateContainer = observer(() => {
     >
       {({handleSubmit, isSubmitting}) => (
         <Styled.Wrapper onSubmit={handleSubmit}>
+          <FieldText name="hostname" placeholder="Hostname" required />
           <FieldRadio name="serverIp" placeholder="Server" options={servers.options} required />
           <FieldText name="name" placeholder="Name" required />
           <FieldText name="image" placeholder="Image" required />

@@ -128,6 +128,7 @@ export interface Container {
   volumes: Volume[]
   args: string[]
   serverIp: string
+  hostname?: string
 
   dockerId: string | null
 }

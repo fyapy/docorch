@@ -24,9 +24,9 @@ export class ContainersStore {
       this.root.notifications.addAsyncError(e)
     }
   }
-  createContainer = async (values: CreateContainerValues) => {
+  createContainer = async ({hostname, ...values}: CreateContainerValues) => {
     try {
-      await http.post('/api/create-container', values)
+      await http.post('/api/create-container', {hostname: hostname || undefined, ...values})
       navigate('/')
     } catch (e) {
       this.root.notifications.addAsyncError(e)
