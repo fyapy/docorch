@@ -14,7 +14,7 @@ const schema = z.object({
 function hostsInster(host: Host) {
   const originalHosts = Deno.readTextFileSync('/etc/hosts').split('\n')
 
-  const editedHosts = [...originalHosts, `${host.ip} ${host.host}\n`].join('\n')
+  const editedHosts = [...originalHosts, `${host.ip} ${host.host}\n`].filter(Boolean).join('\n')
 
   Deno.writeTextFileSync('/etc/hosts', editedHosts)
 }

@@ -12,7 +12,7 @@ function hostsRemove(host: Host) {
   const hostToRemove = `${host.ip} ${host.host}`
   const originalHosts = Deno.readTextFileSync('/etc/hosts').split('\n')
 
-  const editedHosts = originalHosts.filter(h => h !== hostToRemove).join('\n')
+  const editedHosts = originalHosts.filter(h => h !== hostToRemove).filter(Boolean).join('\n')
 
   Deno.writeTextFileSync('/etc/hosts', editedHosts)
 }
