@@ -9,7 +9,7 @@ type Body = z.infer<typeof schema>
 const schema = z.object({id: z.string()})
 
 function hostsRemove(host: Host) {
-  const hostToRemove = `${host.ip} ${host.host}\n`
+  const hostToRemove = `${host.ip} ${host.host}`
   const originalHosts = Deno.readTextFileSync('/etc/hosts').split('\n')
 
   const editedHosts = originalHosts.filter(h => h !== hostToRemove).join('\n')
