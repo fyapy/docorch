@@ -1,26 +1,28 @@
-import {Env, ErrorHandler, HTTPException, Handler, Hono, checkDiskSpace, socketPath} from '../deps.ts'
-import {NotFound} from './database.ts'
-import {enabled} from './docker.ts'
-import {flags} from './flags.ts'
+import Elysia, {ErrorHandler, Handler} from 'elysia'
+import {checkDiskSpace, socketPath} from '../deps'
+import {NotFound} from './database'
+import {enabled} from './docker'
+import {flags} from './flags'
+// import { $ } from 'bun'
 
-export const handleError: ErrorHandler<Env> = (err, c) => {
-  if (err instanceof HTTPException) {
-    return err.getResponse()
-  }
+export const handleError: ErrorHandler = ({code, error}) => {
+  console.log('handleError', error)
 
-  if (err instanceof NotFound) {
-    return c.json({message: 'Database Object not found'}, 404)
-  }
+  return {err: true}
 
-  if ((err.cause as any)?.address === socketPath) {
-    return c.json({message: 'Docker deamon not started'}, 500)
-  }
+  // if (err instanceof NotFound) {
+  //   return c.json({message: 'Database Object not found'}, 404)
+  // }
 
-  if (err instanceof Response) {
-    return err
-  }
+  // if ((err.cause as any)?.address === socketPath) {
+  //   return c.json({message: 'Docker deamon not started'}, 500)
+  // }
 
-  return c.json({message: err.message || 'Unknown error'}, 400)
+  // if (err instanceof Response) {
+  //   return err
+  // }
+
+  // return c.json({message: err.message || 'Unknown error'}, 400)
 }
 
 type RouteOptions = {
@@ -28,44 +30,48 @@ type RouteOptions = {
   url: string
   handle: Handler
 }
-export function masterRoute(hono: Hono, {method, url, handle}: RouteOptions) {
+export function masterRoute(app: Elysia, {method, url, handle}: RouteOptions) {
   if (!flags.master) {
     return
   }
 
+  const apiUrl = `/api${url}`
+
   if (method === 'GET') {
-    console.log(`${method}  ${url}`)
-    hono.get(url, handle)
+    console.log(`${method}  ${apiUrl}`)
+    app.get(apiUrl, handle)
     return
   }
   if (method === 'POST') {
-    console.log(`${method} ${url}`)
-    hono.post(url, handle)
+    console.log(`${method} ${apiUrl}`)
+    app.post(apiUrl, handle)
     return
   }
 
-  console.error(`masterRoute error ${method} ${url}`)
+  console.error(`masterRoute error ${method} ${apiUrl}`)
 }
-export function slaveRoute(hono: Hono, {method, url, handle}: RouteOptions) {
+export function slaveRoute(app: Elysia, {method, url, handle}: RouteOptions) {
   if (!flags.slave) {
     return
   }
 
+  const apiUrl = `/api${url}`
+
   if (method === 'GET') {
-    console.log(`${method}  ${url}`)
-    hono.get(url, handle)
+    console.log(`${method}  ${apiUrl}`)
+    app.get(apiUrl, handle)
     return
   }
   if (method === 'POST') {
-    console.log(`${method} ${url}`)
-    hono.post(url, handle)
+    console.log(`${method} ${apiUrl}`)
+    app.post(apiUrl, handle)
     return
   }
 
-  console.error(`slaveRoute error ${method} ${url}`)
+  console.error(`slaveRoute error ${method} ${apiUrl}`)
 }
 
-export const defineHandlers = (handlers: (hono: Hono) => void) => (hono: Hono) => handlers(hono)
+export const defineHandlers = (handlers: (app: Elysia) => void) => (app: Elysia) => handlers(app)
 
 function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) {
@@ -90,21 +96,13 @@ export async function getDiskInfo() {
   }
 }
 
-const transports = ['tcp', 'udp']
-
-export function requestIp(addr: Deno.Addr) {
-  if (transports.includes(addr.transport)) {
-    return (addr as Deno.NetAddr).hostname
-  }
-
-  return (addr as Deno.UnixAddr).path
-}
-
 export const version = '06.09.36'
 
 export async function stats(ip: string) {
-  const space = await getDiskInfo()
-  const docker = await enabled()
+  // const space = await getDiskInfo()
+  const space = {total: '0', free: '0'}
+  // const docker = await enabled()
+  const docker = false
   const mode = flags.master ? 'master' : 'slave'
   const master = mode === 'master'
   const online = true

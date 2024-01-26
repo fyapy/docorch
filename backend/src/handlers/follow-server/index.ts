@@ -1,7 +1,7 @@
-import {defineHandlers, masterRoute} from '../../utils.ts'
-import {FollowDTO, flags} from '../../flags.ts'
-import {ServerModel} from '../../database.ts'
-import {ip, z} from '../../../deps.ts'
+import {defineHandlers, masterRoute} from '../../utils'
+import {FollowDTO, flags} from '../../flags'
+import {ServerModel} from '../../database'
+import {ip, z} from '../../../deps'
 
 const masterHash = flags.master ? ip : ''
 

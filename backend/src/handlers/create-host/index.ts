@@ -1,6 +1,6 @@
-import {defineHandlers, masterRoute, slaveRoute} from '../../utils.ts'
-import {Host, HostModel, ServerModel} from '../../database.ts'
-import {callNode, ip, nodePost, z} from '../../../deps.ts'
+import {defineHandlers, masterRoute, slaveRoute} from '../../utils'
+import {Host, HostModel, ServerModel} from '../../database'
+import {callNode, ip, nodePost, z, fs} from '../../../deps'
 
 const CREATE_HOST = '/create-host'
 const LOCAL_CREATE_HOST = '/local-create-host'
@@ -12,21 +12,21 @@ const schema = z.object({
 })
 
 function hostsInster(host: Host) {
-  const originalHosts = Deno.readTextFileSync('/etc/hosts').split('\n')
+  const originalHosts = (fs.readFileSync('/etc/hosts') as any).split('\n')
 
   const editedHosts = [...originalHosts, `${host.ip} ${host.host}\n`].filter(Boolean).join('\n')
 
-  Deno.writeTextFileSync('/etc/hosts', editedHosts)
+  fs.writeFileSync('/etc/hosts', editedHosts)
 }
 
 export default defineHandlers(api => {
   slaveRoute(api, {
     url: LOCAL_CREATE_HOST,
     method: 'POST',
-    async handle(c) {
+    async handle({body}) {
       hostsInster(await c.req.json<Host>())
 
-      return c.json({success: true})
+      return {success: true}
     },
   })
 

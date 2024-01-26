@@ -1,11 +1,11 @@
-import {uninstallCommand} from './commands/uninstall.ts'
-import {backendCommand} from './commands/version.ts'
-import {installCommand} from './commands/install.ts'
-import {updateCommand} from './commands/update.ts'
-import {Command, parseArguments} from './cli.ts'
-import { recreateCommand } from './commands/recreate.ts'
+import {uninstallCommand} from './commands/uninstall'
+import {recreateCommand} from './commands/recreate'
+import {backendCommand} from './commands/version'
+import {installCommand} from './commands/install'
+import {updateCommand} from './commands/update'
+import {Command, parseArguments} from './cli'
 
-const command = parseArguments(Deno.args)
+const command = parseArguments(Bun.argv)
 
 if (command.cmd === Command.Ping) {
   console.log('pong')

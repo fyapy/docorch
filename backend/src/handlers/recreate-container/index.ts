@@ -1,8 +1,8 @@
-import {defineHandlers, masterRoute, slaveRoute} from '../../utils.ts'
-import {ContainerModel, Container, NotFound} from '../../database.ts'
-import {removeContainer} from '../remove-container/index.ts'
-import {createContainer} from '../create-container/index.ts'
-import {ip, callNode, nodePost} from '../../../deps.ts'
+import {defineHandlers, masterRoute, slaveRoute} from '../../utils'
+import {ContainerModel, Container, NotFound} from '../../database'
+import {removeContainer} from '../remove-container/index'
+import {createContainer} from '../create-container/index'
+import {ip, callNode, nodePost} from '../../../deps'
 
 const RECREATE_CONTAINER = '/recreate-container'
 const LOCAL_RECREATE_CONTAINER = '/local-recreate-container'

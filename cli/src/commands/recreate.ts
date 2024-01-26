@@ -1,4 +1,4 @@
-import {exitProcess} from '../utils.ts'
+import {exitProcess} from '../utils'
 
 export async function recreateCommand({name}: {name: string}) {
   console.log(`Starting recreate container with name = "${name}"`)

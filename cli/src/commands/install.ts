@@ -1,6 +1,7 @@
-import {backendZipUrl, cwd, fileRemoveSync, isLinux, serviceName, servicePath} from '../utils.ts'
-import {download, fs} from '../../deps.ts'
-import {execCommand} from '../cli.ts'
+import fs from 'fs'
+import download from 'download'
+import {backendZipUrl, cwd, fileRemoveSync, isLinux, serviceName, servicePath} from '../utils'
+import {execCommand} from '../cli'
 
 export async function installCommand(meta: {slave?: string; master?: string}) {
   if (fs.existsSync(servicePath) || fs.existsSync(`${cwd}/backend`)) {
@@ -31,14 +32,14 @@ export async function installCommand(meta: {slave?: string; master?: string}) {
 
   if (isLinux) {
     console.log('Backend download start')
-    await download(backendZipUrl, {file: './backend.zip', dir: cwd})
+    await download(backendZipUrl, cwd)
     console.log('Backend download finish')
 
     await execCommand(`unzip backend.zip`)
     await execCommand(`chmod +x ./backend`)
     fileRemoveSync(`${cwd}/backend.zip`)
 
-    Deno.writeTextFileSync(servicePath, service)
+    fs.writeFileSync(servicePath, service)
     console.log(`Created ${servicePath}`)
 
     await execCommand(`systemctl enable ${serviceName}`)

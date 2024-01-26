@@ -1,20 +1,20 @@
-import {flags} from './flags.ts'
-import {fs, path} from '../deps.ts'
+import {flags} from './flags'
+import {fs, path} from '../deps'
 
-const DATA_DIR = `${Deno.cwd()}/docorch-data`
+const DATA_DIR = `${process.cwd()}/docorch-data`
 if (!fs.existsSync(DATA_DIR)) {
-  Deno.mkdirSync(DATA_DIR)
+  fs.mkdirSync(DATA_DIR)
 }
 
 export class NotFound extends Error {}
 
 function readJson(filePath: string) {
   if (!fs.existsSync(filePath)) {
-    Deno.writeTextFileSync(filePath, '[]')
+    fs.writeFileSync(filePath, '[]')
     return []
   }
 
-  return JSON.parse(Deno.readTextFileSync(filePath))
+  return JSON.parse(fs.readFileSync(filePath) as any)
 }
 
 interface CreateTableProps {
@@ -92,7 +92,7 @@ function createTable<T extends Record<string, any>>({name}: CreateTableProps) {
   setInterval(() => {
     if (hasChanges) {
       hasChanges = false
-      Deno.writeTextFileSync(filePath, JSON.stringify(data))
+      fs.writeFileSync(filePath, JSON.stringify(data))
     }
   }, 5000)
 

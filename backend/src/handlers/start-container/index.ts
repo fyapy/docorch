@@ -1,7 +1,7 @@
-import {defineHandlers, masterRoute, slaveRoute} from '../../utils.ts'
-import {callNode, ip, nodePost} from '../../../deps.ts'
-import {ContainerModel} from '../../database.ts'
-import * as docker from '../../docker.ts'
+import {defineHandlers, masterRoute, slaveRoute} from '../../utils'
+import {callNode, ip, nodePost} from '../../../deps'
+import {ContainerModel} from '../../database'
+import * as docker from '../../docker'
 
 const START_CONTAINER = '/start-container'
 const LOCAL_START_CONTAINER = '/local-start-container'

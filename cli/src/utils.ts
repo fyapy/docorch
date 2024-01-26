@@ -1,8 +1,9 @@
-import {fs, os} from '../deps.ts'
+import process from 'process'
+import fs from 'fs'
 
 export function fileRemoveSync(path: string) {
   if (fs.existsSync(path)) {
-    Deno.removeSync(path)
+    fs.unlinkSync(path)
   }
   console.log(`Removed ${path}`)
 }
@@ -11,7 +12,7 @@ export const cwd = '/etc/docorch'
 
 export const version = '06.09.36'
 
-export const isLinux = os.platform() === 'linux'
+export const isLinux = process.platform === 'linux'
 
 export const serviceName = 'docorch.service'
 export const servicePath = `/etc/systemd/system/${serviceName}`
@@ -20,5 +21,5 @@ export const backendZipUrl = 'https://github.com/fyapy/docorch/raw/master/backen
 
 export function exitProcess(...args: any[]): never {
   console.error(...args)
-  Deno.exit(1)
+  process.exit(1)
 }

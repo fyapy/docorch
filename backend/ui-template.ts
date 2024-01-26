@@ -1,16 +1,35 @@
-import {Hono, basicAuth} from './deps.ts'
-import {flags} from './src/flags.ts'
+import {Elysia} from 'elysia'
+import {basicAuth} from '@eelkevdbos/elysia-basic-auth'
+import {flags} from './src/flags'
 
-export default (hono: Hono) => {
+export default (app: Elysia) => {
   const [username, password] = flags.master!.split(':')
 
-  hono.use('/ui/*', basicAuth({username, password}))
+  app.use(basicAuth({
+    credentials: [{username, password}],
+  }))
 
-  hono.get('/ui/assets/*.js', c => c.text(`<--js-->`, 200, {'Content-Type': 'text/javascript'}))
+  app.get('/ui/assets/*.js', ({set}) => {
+    set.headers['Content-Type'] = 'text/javascript'
 
-  hono.get('/ui/assets/*.css', c => c.text(`<--css-->`, 200, {'Content-Type': 'text/css'}))
+    return `<--js-->`
+  })
 
-  hono.get('/ui/favicon.svg', c => c.text(`<--svg-->`, 200, {'Content-Type': 'image/svg+xml'}))
+  app.get('/ui/assets/*.css', ({set}) => {
+    set.headers['Content-Type'] = 'text/css'
 
-  hono.get('/ui/*', c => c.html(`<--html-->`))
+    return `<--css-->`
+  })
+
+  app.get('/ui/favicon.svg', ({set}) => {
+    set.headers['Content-Type'] = 'image/svg+xml'
+
+    return `<--svg-->`
+  })
+
+  app.get('/ui/*', ({set}) => {
+    set.headers['Content-Type'] = 'text/html'
+
+    return `<--html-->`
+  })
 }

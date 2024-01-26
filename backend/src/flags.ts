@@ -4,8 +4,8 @@ export interface FollowDTO {
 }
 
 export const flags = {
-  master: Deno.env.get('MASTER'),
-  slave: Deno.env.get('SLAVE'),
+  master: process.env.MASTER,
+  slave: process.env.SLAVE,
 }
 
 if (flags.master) {
@@ -44,7 +44,7 @@ if (flags.master) {
   }
 } else {
   throw new Error(`Flags not provided ${JSON.stringify({
-    env: Deno.env.toObject(),
+    env: process.env,
     flags,
   })}`)
 }

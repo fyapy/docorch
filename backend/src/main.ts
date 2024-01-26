@@ -1,31 +1,40 @@
-import {handleError, requestIp, stats, version} from './utils.ts'
-import {ServerModel} from './database.ts'
-import {Hono, ip} from '../deps.ts'
-import {flags} from './flags.ts'
-import api from './api.ts'
-import ui from '../ui.ts'
+
+import {Elysia} from 'elysia'
+import {cors} from '@elysiajs/cors'
+import http from 'http'
+// @ts-ignore
+import {ip as elysiaIp} from 'elysia-ip'
+import {handleError, stats, version} from './utils'
+import {ServerModel} from './database'
+import {flags} from './flags'
+import {ip} from '../deps'
+import { containers } from './docker'
+// import api from './api'
+// // import ui from '../ui'
+
+try {
+  await containers()
+} catch (e) {
+  console.log('e', e)
+}
 
 if (flags.master && !ServerModel.exists('ip', ip)) {
   ServerModel.insert({ip})
 }
 
-const app = new Hono()
-
-app.onError(handleError)
-
-app.get('/', c => c.json({}))
-
-app.get('/stats', async c => c.json(await stats(ip)))
-
-app.route('/api', api)
+const app = (
+  new Elysia()
+    .use(cors())
+    .use(elysiaIp())
+    // .onError(handleError)
+    .get('/', () => ({}))
+    // .get('/stats', () => stats(ip))
+)
 
 if (flags.master) {
-  ui(app)
+  // ui(app)
 }
 
-Deno.serve({
-  port: 4545,
-  onListen({hostname, port}) {
-    console.log(`Listening on http://${hostname}:${port}/ version ${version}`)
-  },
-}, (req, info) => app.fetch(req, {ip: requestIp(info.remoteAddr)}))
+app.listen(4545, ({hostname, port}) => {
+  console.log(`Listening on http://${hostname}:${port}/ version ${version}`)
+})

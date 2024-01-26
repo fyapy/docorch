@@ -1,6 +1,6 @@
-import {backendZipUrl, cwd, fileRemoveSync, isLinux, serviceName} from '../utils.ts'
-import {download} from '../../deps.ts'
-import {execCommand} from '../cli.ts'
+import download from 'download'
+import {backendZipUrl, cwd, fileRemoveSync, isLinux, serviceName} from '../utils'
+import {execCommand} from '../cli'
 
 export async function updateCommand() {
   isLinux && await execCommand(`apt install unzip -y`)
@@ -8,7 +8,7 @@ export async function updateCommand() {
   fileRemoveSync(`${cwd}/backend.zip`)
 
   console.log('Backend download start')
-  await download(backendZipUrl, {file: './backend.zip', dir: cwd})
+  await download(backendZipUrl, cwd)
   console.log('Backend download finish')
 
   isLinux && await execCommand(`systemctl stop ${serviceName}`)

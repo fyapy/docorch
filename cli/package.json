@@ -1,0 +1,23 @@
+{
+  "name": "doctl",
+  "description": "docorch cli",
+  "authors": "Amir Abdullin",
+  "module": "src/main.js",
+  "scripts": {
+    "installl": "bun run ./src/main.ts install --master=admin:123",
+    "ping": "bun run ./src/main.ts ping",
+    "version": "bun run ./src/main.ts version",
+    "update": "bun run ./src/main.ts update",
+    "build:mac": "deno compile -A --target x86_64-apple-darwin --output docorch ./src/main.ts",
+    "build:linux": "deno compile -A --target x86_64-unknown-linux-gnu --output docorch ./src/main.ts"
+  },
+  "devDependencies": {
+    "@types/download": "^8.0.5",
+    "@types/minimist": "^1.2.5",
+    "bun-types": "latest"
+  },
+  "dependencies": {
+    "download": "^8.0.0",
+    "minimist": "^1.2.8"
+  }
+}

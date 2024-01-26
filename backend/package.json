@@ -1,0 +1,27 @@
+{
+  "name": "docorch",
+  "description": "docorch backend",
+  "authors": "Amir Abdullin",
+  "module": "src/main.js",
+  "scripts": {
+    "dev:master": "MASTER=login:password bun run --watch ./src/main.ts",
+    "dev:slave": "SLAVE=5.4.145.90 bun run --watch ./src/main.ts",
+    "build:mac": "deno compile --unstable -A --target x86_64-apple-darwin --output backend ./src/main.ts",
+    "build:linux": "deno compile --unstable -A --target x86_64-unknown-linux-gnu --output backend ./src/main.ts"
+  },
+  "devDependencies": {
+    "@types/ip": "^1.1.3",
+    "bun-types": "^1.0.24"
+  },
+  "dependencies": {
+    "@eelkevdbos/elysia-basic-auth": "^1.4.0",
+    "@elysiajs/cors": "^0.8.0",
+    "check-disk-space": "^3.4.0",
+    "elysia": "^0.8.9",
+    "elysia-ip": "^0.0.6",
+    "hono": "^3.12.6",
+    "ip": "^1.1.8",
+    "undici": "5.22.0",
+    "zod": "^3.22.4"
+  }
+}

@@ -1,6 +1,6 @@
-import {Host, HostModel, NotFound, ServerModel} from '../../database.ts'
-import {defineHandlers, masterRoute, slaveRoute} from '../../utils.ts'
-import {callNode, ip, nodePost, z} from '../../../deps.ts'
+import {Host, HostModel, NotFound, ServerModel} from '../../database'
+import {defineHandlers, masterRoute, slaveRoute} from '../../utils'
+import {callNode, ip, nodePost, z, fs} from '../../../deps'
 
 const REMOVE_HOST = '/remove-host'
 const LOCAL_REMOVE_HOST = '/local-remove-host'
@@ -10,11 +10,11 @@ const schema = z.object({id: z.string()})
 
 function hostsRemove(host: Host) {
   const hostToRemove = `${host.ip} ${host.host}`
-  const originalHosts = Deno.readTextFileSync('/etc/hosts').split('\n')
+  const originalHosts = (fs.readFileSync('/etc/hosts') as any as string).split('\n')
 
   const editedHosts = originalHosts.filter(h => h !== hostToRemove).filter(Boolean).join('\n')
 
-  Deno.writeTextFileSync('/etc/hosts', editedHosts)
+  fs.writeFileSync('/etc/hosts', editedHosts)
 }
 
 export default defineHandlers(api => {

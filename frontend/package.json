@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build"
+    "dev": "bunx --bun vite",
+    "build": "bunx tsc && bunx --bun vite build"
   },
   "dependencies": {
     "formik": "^2.4.5",

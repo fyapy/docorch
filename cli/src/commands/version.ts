@@ -1,5 +1,4 @@
-// deno-lint-ignore-file no-empty
-import {version} from '../utils.ts'
+import {version} from '../utils'
 
 export async function backendCommand() {
   const cli = version

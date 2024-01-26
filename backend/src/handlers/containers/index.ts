@@ -1,7 +1,7 @@
-import {defineHandlers, masterRoute, slaveRoute} from '../../utils.ts'
-import {ContainerModel, ServerModel} from '../../database.ts'
-import {ip, callNode} from '../../../deps.ts'
-import * as docker from '../../docker.ts'
+import {defineHandlers, masterRoute, slaveRoute} from '../../utils'
+import {ContainerModel, ServerModel} from '../../database'
+import {ip, callNode} from '../../../deps'
+import * as docker from '../../docker'
 
 const CONTAINERS = '/containers'
 const LOCAL_CONTAINERS = '/local-containers'
@@ -14,9 +14,9 @@ export default defineHandlers(api => {
     url: LOCAL_CONTAINERS,
     async handle(c) {
       try {
-        return c.json(await docker.containers())
+        return await docker.containers()
       } catch {
-        return c.json([])
+        return []
       }
     },
   })
@@ -41,7 +41,7 @@ export default defineHandlers(api => {
         }
       }))
 
-      return c.json(ContainerModel.select().map(item => {
+      return ContainerModel.select().map(item => {
         const docker = responses.flat().find(d => d.Id === item.dockerId)
 
         return {
@@ -58,7 +58,7 @@ export default defineHandlers(api => {
             : null,
           ...item,
         }
-      }))
+      })
     },
   })
 })
