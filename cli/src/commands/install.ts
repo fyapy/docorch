@@ -1,6 +1,6 @@
 import fs from 'fs'
 import download from 'download'
-import {backendZipUrl, cwd, fileRemoveSync, isLinux, serviceName, servicePath} from '../utils'
+import {backendUrl, cwd, fileRemoveSync, isLinux, serviceName, servicePath} from '../utils'
 import {execCommand} from '../cli'
 
 export async function installCommand(meta: {slave?: string; master?: string}) {
@@ -32,12 +32,10 @@ export async function installCommand(meta: {slave?: string; master?: string}) {
 
   if (isLinux) {
     console.log('Backend download start')
-    await download(backendZipUrl, cwd)
+    await download(backendUrl, cwd)
     console.log('Backend download finish')
 
-    await execCommand(`unzip backend.zip`)
     await execCommand(`chmod +x ./backend`)
-    fileRemoveSync(`${cwd}/backend.zip`)
 
     fs.writeFileSync(servicePath, service)
     console.log(`Created ${servicePath}`)

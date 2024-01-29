@@ -13,7 +13,7 @@ interface FetchUnixOptions {
   prefix?: string
 }
 export const fetchUnix = (url: string, {method = 'GET', body, headers}: FetchUnixOptions = {}) => fetch('http://localhost/v1.43' + url, {
-  dispatcher: new Agent({connect: {socketPath}}),
+  dispatcher,
   headers,
   method,
   body,

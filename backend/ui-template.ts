@@ -1,35 +1,36 @@
-import {Elysia} from 'elysia'
-import {basicAuth} from '@eelkevdbos/elysia-basic-auth'
+import basicAuth from 'express-basic-auth'
+import {Express} from 'express'
 import {flags} from './src/flags'
 
-export default (app: Elysia) => {
+export default (app: Express) => {
   const [username, password] = flags.master!.split(':')
 
   app.use(basicAuth({
-    credentials: [{username, password}],
+    users: {[username]: password}
   }))
 
-  app.get('/ui/assets/*.js', ({set}) => {
-    set.headers['Content-Type'] = 'text/javascript'
 
-    return `<--js-->`
+  app.get('/ui/*', (req, res) => {
+    res.header('Content-Type', 'text/html')
+
+    res.send(`<--html-->`)
   })
 
-  app.get('/ui/assets/*.css', ({set}) => {
-    set.headers['Content-Type'] = 'text/css'
+  app.get('/ui/assets/*.js', (req, res) => {
+    res.header('Content-Type', 'text/javascript')
 
-    return `<--css-->`
+    res.send(`<--js-->`)
   })
 
-  app.get('/ui/favicon.svg', ({set}) => {
-    set.headers['Content-Type'] = 'image/svg+xml'
+  app.get('/ui/assets/*.css', (req, res) => {
+    res.header('Content-Type', 'text/css')
 
-    return `<--svg-->`
+    res.send(`<--css-->`)
   })
 
-  app.get('/ui/*', ({set}) => {
-    set.headers['Content-Type'] = 'text/html'
+  app.get('/ui/favicon.svg', (req, res) => {
+    res.header('Content-Type', 'image/svg+xml')
 
-    return `<--html-->`
+    res.send(`<--svg-->`)
   })
 }

@@ -1,40 +1,37 @@
-
-import {Elysia} from 'elysia'
-import {cors} from '@elysiajs/cors'
-import http from 'http'
-// @ts-ignore
-import {ip as elysiaIp} from 'elysia-ip'
+import express from 'express'
+import cors from 'cors'
 import {handleError, stats, version} from './utils'
 import {ServerModel} from './database'
 import {flags} from './flags'
 import {ip} from '../deps'
-import { containers } from './docker'
-// import api from './api'
-// // import ui from '../ui'
-
-try {
-  await containers()
-} catch (e) {
-  console.log('e', e)
-}
+import api from './api'
+import ui from '../ui-template'
 
 if (flags.master && !ServerModel.exists('ip', ip)) {
   ServerModel.insert({ip})
 }
 
-const app = (
-  new Elysia()
-    .use(cors())
-    .use(elysiaIp())
-    // .onError(handleError)
-    .get('/', () => ({}))
-    // .get('/stats', () => stats(ip))
-)
+const app = express()
+
+app.set('trust proxy', true)
+
+app.use(cors)
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+
+app.get('/', () => ({}))
+app.get('/stats', () => stats(ip))
+
+api(app)
 
 if (flags.master) {
-  // ui(app)
+  ui(app)
 }
 
-app.listen(4545, ({hostname, port}) => {
-  console.log(`Listening on http://${hostname}:${port}/ version ${version}`)
-})
+app.use(handleError)
+
+
+const port = 4545
+const hostname = '0.0.0.0'
+
+app.listen(port, hostname, () => console.log(`Listening on http://${hostname}:${port}/ version ${version}`))

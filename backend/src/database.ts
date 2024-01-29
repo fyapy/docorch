@@ -1,7 +1,7 @@
 import {flags} from './flags'
 import {fs, path} from '../deps'
 
-const DATA_DIR = `${process.cwd()}/docorch-data`
+const DATA_DIR = `${process.cwd().replace('/dist', '')}/docorch-data`
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR)
 }

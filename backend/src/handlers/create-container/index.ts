@@ -39,19 +39,15 @@ export default defineHandlers(api => {
   slaveRoute(api, {
     method: 'POST',
     url: LOCAL_CREATE_CONTAINER,
-    async handle(c) {
-      const body = await c.req.json<CreateContainerInput>()
-
-      return c.json(await createContainer(body))
+    async handle({body}, c) {
+      c.json(await createContainer(body))
     },
   })
 
   masterRoute(api, {
     method: 'POST',
     url: CREATE_CONTAINER,
-    async handle(c) {
-      const body = await c.req.json<CreateContainerInput>()
-
+    async handle({body}, c) {
       const containerWithSameName = ContainerModel.select().some(c => c.name === body.name)
       if (containerWithSameName) {
         throw new Error(`Container with name = "${body.name}" already exists`)
@@ -63,7 +59,7 @@ export default defineHandlers(api => {
 
       const data = ContainerModel.insert({id: crypto.randomUUID(), dockerId, ...body})
 
-      return c.json(data)
+      c.json(data)
     },
   })
 })

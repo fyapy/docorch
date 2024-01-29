@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-explicit-any
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 interface HttpOptions extends Exclude<RequestInit, 'body' | 'method'> {
   proggress?: (progress: number) => void

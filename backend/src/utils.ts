@@ -1,14 +1,14 @@
-import Elysia, {ErrorHandler, Handler} from 'elysia'
+import {Express, RequestHandler, ErrorRequestHandler} from 'express'
 import {checkDiskSpace, socketPath} from '../deps'
-import {NotFound} from './database'
-import {enabled} from './docker'
+// import {NotFound} from './database'
+// import {enabled} from './docker'
 import {flags} from './flags'
-// import { $ } from 'bun'
 
-export const handleError: ErrorHandler = ({code, error}) => {
-  console.log('handleError', error)
+export const handleError: ErrorRequestHandler = (err, req, res, next) => {
+  console.error(err.stack)
+  res.status(500).send('Something broke!')
 
-  return {err: true}
+  // return {err: true}
 
   // if (err instanceof NotFound) {
   //   return c.json({message: 'Database Object not found'}, 404)
@@ -28,9 +28,9 @@ export const handleError: ErrorHandler = ({code, error}) => {
 type RouteOptions = {
   method: 'GET' | 'POST',
   url: string
-  handle: Handler
+  handle: RequestHandler
 }
-export function masterRoute(app: Elysia, {method, url, handle}: RouteOptions) {
+export function masterRoute(app: Express, {method, url, handle}: RouteOptions) {
   if (!flags.master) {
     return
   }
@@ -50,7 +50,7 @@ export function masterRoute(app: Elysia, {method, url, handle}: RouteOptions) {
 
   console.error(`masterRoute error ${method} ${apiUrl}`)
 }
-export function slaveRoute(app: Elysia, {method, url, handle}: RouteOptions) {
+export function slaveRoute(app: Express, {method, url, handle}: RouteOptions) {
   if (!flags.slave) {
     return
   }
@@ -71,7 +71,7 @@ export function slaveRoute(app: Elysia, {method, url, handle}: RouteOptions) {
   console.error(`slaveRoute error ${method} ${apiUrl}`)
 }
 
-export const defineHandlers = (handlers: (app: Elysia) => void) => (app: Elysia) => handlers(app)
+export const defineHandlers = (handlers: (app: Express) => void) => (app: Express) => handlers(app)
 
 function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) {
@@ -96,7 +96,7 @@ export async function getDiskInfo() {
   }
 }
 
-export const version = '06.09.36'
+export const version = '29.14.17'
 
 export async function stats(ip: string) {
   // const space = await getDiskInfo()

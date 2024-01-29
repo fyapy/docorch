@@ -3,21 +3,22 @@
   "description": "docorch cli",
   "authors": "Amir Abdullin",
   "module": "src/main.js",
+  "bin": "./dist/index.js",
   "scripts": {
-    "installl": "bun run ./src/main.ts install --master=admin:123",
-    "ping": "bun run ./src/main.ts ping",
-    "version": "bun run ./src/main.ts version",
-    "update": "bun run ./src/main.ts update",
-    "build:mac": "deno compile -A --target x86_64-apple-darwin --output docorch ./src/main.ts",
-    "build:linux": "deno compile -A --target x86_64-unknown-linux-gnu --output docorch ./src/main.ts"
+    "compile": "ncc build ./src/main.ts -o dist",
+    "build:mac": "npm run compile && rm -rf ./mac-doclt && pkg -t node18.5-mac -o mac-doctl ./dist/index.js && rm -rf ./dist",
+    "build:linux": "npm run compile && rm -rf ./doclt && pkg -t node18.5-linux -o doctl ./dist/index.js && rm -rf ./dist"
   },
   "devDependencies": {
     "@types/download": "^8.0.5",
+    "@types/isomorphic-fetch": "^0.0.39",
     "@types/minimist": "^1.2.5",
-    "bun-types": "latest"
+    "@types/node": "^20.11.9",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
     "download": "^8.0.0",
+    "isomorphic-fetch": "^3.0.0",
     "minimist": "^1.2.8"
   }
 }

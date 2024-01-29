@@ -1,0 +1,12 @@
+{
+  "name": "builder",
+  "author": "Amir Abdullin",
+  "license": "ISC",
+  "type": "module",
+  "scripts": {
+    "build": "ts-node-esm ./main.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.10"
+  }
+}

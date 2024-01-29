@@ -5,7 +5,6 @@ import {callNode, ip, nodePost, z, fs} from '../../../deps'
 const REMOVE_HOST = '/remove-host'
 const LOCAL_REMOVE_HOST = '/local-remove-host'
 
-type Body = z.infer<typeof schema>
 const schema = z.object({id: z.string()})
 
 function hostsRemove(host: Host) {
@@ -21,18 +20,17 @@ export default defineHandlers(api => {
   slaveRoute(api, {
     url: LOCAL_REMOVE_HOST,
     method: 'POST',
-    async handle(c) {
-      hostsRemove(await c.req.json<Host>())
+    async handle({body}, c) {
+      hostsRemove(body)
 
-      return c.json({success: true})
+      c.json({success: true})
     },
   })
 
   masterRoute(api, {
     url: REMOVE_HOST,
     method: 'POST',
-    async handle(c) {
-      const body = await c.req.json<Body>()
+    async handle({body}, c) {
       schema.parse(body)
 
       const host = HostModel.select().find(h => h.id === body.id)
@@ -51,7 +49,7 @@ export default defineHandlers(api => {
       HostModel.remove('id', body.id)
 
 
-      return c.json({success: true})
+      c.json({success: true})
     },
   })
 })

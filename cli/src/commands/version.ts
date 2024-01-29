@@ -1,3 +1,4 @@
+import fetch from 'isomorphic-fetch'
 import {version} from '../utils'
 
 export async function backendCommand() {

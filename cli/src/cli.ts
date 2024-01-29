@@ -1,6 +1,5 @@
-import {$} from 'bun'
 import parseArgs from 'minimist'
-import {cwd, exitProcess} from './utils'
+import {exec, exitProcess} from './utils'
 
 export enum Command {
   Recreate = 'recreate',
@@ -68,7 +67,7 @@ export async function execCommand(command: string) {
   console.log(`Exec: ${command}`)
 
   try {
-    return await $`${command}`.text()
+    return await exec(command)
   } catch (e) {
     exitProcess(`Execure command error: `, JSON.stringify(e))
   }

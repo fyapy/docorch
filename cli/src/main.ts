@@ -5,28 +5,30 @@ import {installCommand} from './commands/install'
 import {updateCommand} from './commands/update'
 import {Command, parseArguments} from './cli'
 
-const command = parseArguments(Bun.argv)
+const command = parseArguments(process.argv)
 
-if (command.cmd === Command.Ping) {
-  console.log('pong')
-}
+switch (command.cmd) {
+  case Command.Ping:
+    console.log('pong')
+    break
 
-if (command.cmd === Command.Version) {
-  await backendCommand()
-}
+  case Command.Version:
+    await backendCommand()
+    break
 
-if (command.cmd === Command.Uninstall) {
-  await uninstallCommand()
-}
+  case Command.Uninstall:
+    await uninstallCommand()
+    break
 
-if (command.cmd === Command.Install) {
-  await installCommand(command.meta)
-}
+  case Command.Install:
+    await installCommand(command.meta)
+    break
 
-if (command.cmd === Command.Update) {
-  await updateCommand()
-}
+  case Command.Update:
+    await updateCommand()
+    break
 
-if (command.cmd === Command.Recreate) {
-  await recreateCommand(command.meta as {name: string})
+  case Command.Recreate:
+    await recreateCommand(command.meta as {name: string})
+    break
 }

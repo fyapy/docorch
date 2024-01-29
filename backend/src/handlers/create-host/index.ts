@@ -5,7 +5,6 @@ import {callNode, ip, nodePost, z, fs} from '../../../deps'
 const CREATE_HOST = '/create-host'
 const LOCAL_CREATE_HOST = '/local-create-host'
 
-type Body = z.infer<typeof schema>
 const schema = z.object({
   host: z.string(),
   ip: z.string(),
@@ -24,7 +23,7 @@ export default defineHandlers(api => {
     url: LOCAL_CREATE_HOST,
     method: 'POST',
     async handle({body}) {
-      hostsInster(await c.req.json<Host>())
+      hostsInster(body)
 
       return {success: true}
     },
@@ -33,8 +32,7 @@ export default defineHandlers(api => {
   masterRoute(api, {
     url: CREATE_HOST,
     method: 'POST',
-    async handle(c) {
-      const body = await c.req.json<Body>()
+    async handle({body}, res) {
       schema.parse(body)
 
       if (HostModel.select().some(h => h.ip === body.ip || h.host === body.host)) {
@@ -52,7 +50,7 @@ export default defineHandlers(api => {
         })
       )
 
-      return c.json({success: true})
+      res.json({success: true})
     },
   })
 })

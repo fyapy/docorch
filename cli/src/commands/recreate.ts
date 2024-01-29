@@ -1,3 +1,4 @@
+import fetch from 'isomorphic-fetch'
 import {exitProcess} from '../utils'
 
 export async function recreateCommand({name}: {name: string}) {
