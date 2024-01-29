@@ -1,31 +1,37 @@
-import {handleError, requestIp, stats, version} from './utils.ts'
-import {ServerModel} from './database.ts'
-import {Hono, ip} from '../deps.ts'
-import {flags} from './flags.ts'
-import api from './api.ts'
-import ui from '../ui.ts'
+import express from 'express'
+import cors from 'cors'
+import {handleError, stats, version} from './utils'
+import {ServerModel} from './database'
+import {flags} from './flags'
+import {ip} from '../deps'
+import api from './api'
+import ui from '../ui-template'
 
 if (flags.master && !ServerModel.exists('ip', ip)) {
   ServerModel.insert({ip})
 }
 
-const app = new Hono()
+const app = express()
 
-app.onError(handleError)
+app.set('trust proxy', true)
 
-app.get('/', c => c.json({}))
+app.use(cors)
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
 
-app.get('/stats', async c => c.json(await stats(ip)))
+app.get('/', () => ({}))
+app.get('/stats', () => stats(ip))
 
-app.route('/api', api)
+api(app)
 
 if (flags.master) {
   ui(app)
 }
 
-Deno.serve({
-  port: 4545,
-  onListen({hostname, port}) {
-    console.log(`Listening on http://${hostname}:${port}/ version ${version}`)
-  },
-}, (req, info) => app.fetch(req, {ip: requestIp(info.remoteAddr)}))
+app.use(handleError)
+
+
+const port = 4545
+const hostname = '0.0.0.0'
+
+app.listen(port, hostname, () => console.log(`Listening on http://${hostname}:${port}/ version ${version}`))

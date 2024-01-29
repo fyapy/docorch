@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-explicit-any
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 interface HttpOptions extends Exclude<RequestInit, 'body' | 'method'> {
   proggress?: (progress: number) => void
@@ -7,7 +6,8 @@ interface HttpOptions extends Exclude<RequestInit, 'body' | 'method'> {
 type HttpBody = Record<string, any>
 type NewHttpClient = {
   baseURL: string
-  getHeaders: () => RequestInit['headers']
+  getHeaders(): RequestInit['headers']
+  rewriteUrl?(url: string): string
 }
 
 const defaultHeaders: HeadersInit = {
@@ -18,6 +18,7 @@ const defaultHeaders: HeadersInit = {
 export const createClient = ({
   baseURL,
   getHeaders,
+  rewriteUrl,
 }: NewHttpClient) => {
   const formatBody = (body?: HttpBody, options: HttpOptions = {}) => {
     const headers = {...defaultHeaders}
@@ -46,8 +47,9 @@ export const createClient = ({
     options: HttpOptions = {},
   ) => {
     const fullUrl = /^http/i.test(url) ? url : `${baseURL}${url}`
+    const inputUrl = typeof rewriteUrl === 'undefined' ? fullUrl : rewriteUrl(fullUrl)
 
-    const response = await fetch(fullUrl, {...options, method})
+    const response = await fetch(inputUrl, {...options, method})
 
     if (response.ok) {
       return await response.json() as R
@@ -106,6 +108,13 @@ export const createClient = ({
 export default createClient({
   baseURL: '',
   getHeaders: () => ({}),
+  rewriteUrl(url) {
+    // if (import.meta.env.DEV) {
+    //   return `http://localhost:4545${url}`
+    // }
+
+    return url
+  },
 })
 
 export function createSearch(data: Record<string, string | number | null | boolean | undefined>) {

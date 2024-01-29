@@ -13,16 +13,21 @@ export class NotificationsStore {
     makeAutoObservable(this)
   }
 
+  push = (text: string) => {
+    this.allList.push({id: nanoid(), text, type: 'error'})
+  }
+
   addAsyncError = async (e: Response | string | unknown) => {
     if (e instanceof Response) {
-      const res = await e.json()
+      try {
+        const res = await e.json()
 
-      if (res?.message) {
-        runInAction(() => this.allList.push({
-          id: nanoid(),
-          text: res.message,
-          type: 'error',
-        }))
+        if (res?.message) {
+          this.push(res.message)
+          return
+        }
+      } catch {
+        this.push(e.statusText)
         return
       }
     }

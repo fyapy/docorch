@@ -1,11 +1,13 @@
+import fetch from 'isomorphic-fetch'
+
 export interface FollowDTO {
   success: boolean
   message: string
 }
 
 export const flags = {
-  master: Deno.env.get('MASTER'),
-  slave: Deno.env.get('SLAVE'),
+  master: process.env.MASTER,
+  slave: process.env.SLAVE,
 }
 
 if (flags.master) {
@@ -22,29 +24,29 @@ if (flags.master) {
 
   if (flags.slave === devIp) {
     console.log('Slave runned success=true message=Runned not in production mode')
-  } else  {
+  } else {
     try {
-      const res = await fetch(`http://${flags.slave}:4545/api/follow-server`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({token: flags.slave}),
-      })
+      // const res = await fetch(`http://${flags.slave}:4545/api/follow-server`, {
+      //   method: 'POST',
+      //   headers: {'Content-Type': 'application/json'},
+      //   body: JSON.stringify({token: flags.slave}),
+      // })
 
-      if (!res.ok) {
-        throw res
-      }
+      // if (!res.ok) {
+      //   throw res
+      // }
 
-      const json = await res.json() as FollowDTO
+      // const json = await res.json()
 
-      console.log(`Slave runned success=${json.success} message=${json.message}`)
+      // console.log(`Slave runned success=${json.success} message=${json.message}`)
     } catch (e) {
       console.error(e)
       throw e
     }
   }
 } else {
-  throw new Error(`Flags not provided ${JSON.stringify({
-    env: Deno.env.toObject(),
-    flags,
-  })}`)
+  // throw new Error(`Flags not provided ${JSON.stringify({
+  //   env: process.env,
+  //   flags,
+  // })}`)
 }

@@ -1,6 +1,6 @@
 /node_modules
 /docorch-data
 .DS_Store
-docorch
-backend
+mac-backend
 ui.ts
+dist

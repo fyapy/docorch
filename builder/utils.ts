@@ -1,35 +1,21 @@
-export async function execCommand(originalCommand: string, cwd?: 'frontend' | 'backend' | 'cli') {
-  const [cmd, ...args] = originalCommand.split(' ')
-
-  const command = new Deno.Command(cmd, {
-    cwd: cwd ? `../${cwd}` : undefined,
-    args,
-  })
-
-  const {code, stderr, stdout} = await command.output()
-
-  const error = new TextDecoder().decode(stderr)
-  const out = new TextDecoder().decode(stdout)
-  const output = {code, error, out}
-
-  if (code === 0) {
-    return output
-  }
-
-  throw new Error(JSON.stringify(output))
-}
+import {exec as execCb} from 'child_process'
+import fs from 'fs/promises'
+import path from 'path'
 
 export async function filesList(directory: string): Promise<string[]> {
   const foundFiles: string[] = []
 
-  for await (const fileOrFolder of Deno.readDir(directory)) {
-    if (fileOrFolder.isDirectory) {
-      if (fileOrFolder.name === '.git') continue
+  for (const filePath of await fs.readdir(directory)) {
+    const fileOrFolder = await fs.stat(`${directory}/${filePath}`)
+    const name = path.basename(filePath)
 
-      const nestedFiles = await filesList(`${directory}/${fileOrFolder.name}`)
+    if (fileOrFolder.isDirectory()) {
+      if (name === '.git') continue
+
+      const nestedFiles = await filesList(`${directory}/${name}`)
       foundFiles.push(...nestedFiles)
     } else {
-      foundFiles.push(`${directory}/${fileOrFolder.name}`)
+      foundFiles.push(`${directory}/${name}`)
     }
   }
 
@@ -38,20 +24,16 @@ export async function filesList(directory: string): Promise<string[]> {
 
 export async function exists(filename: string) {
   try {
-    await Deno.stat(filename)
+    await fs.stat(filename)
     return true
   } catch (error) {
-    if (error instanceof Deno.errors.NotFound) {
-      return false
-    } else {
-      throw error
-    }
+    return false
   }
 }
 
 export async function fileRemove(path: string) {
   if (await exists(path)) {
-    await Deno.remove(path)
+    await fs.unlink(path)
   }
 }
 
@@ -62,11 +44,11 @@ export function escapeJS(js: string) {
 export const normalizeDate = (date: number) => `${date}`.length === 1 ? `0${date}` : date
 
 export async function updateVersion(filePath: string, version: string) {
-  const file = await Deno.readTextFile(filePath)
+  const file = String(await fs.readFile(filePath))
 
   const versionMask = /version = \'\d\d\.\d\d\.\d\d\'/gm
 
-  await Deno.writeTextFile(filePath, file.replace(versionMask, `version = \'${version}\'`))
+  await fs.writeFile(filePath, file.replace(versionMask, `version = \'${version}\'`))
 }
 
 export function newVersion() {
@@ -77,3 +59,14 @@ export function newVersion() {
     normalizeDate(date.getMinutes()),
   ].join('.')
 }
+
+export const exec = (cmd: string, cwd: string) => new Promise<string>((res, rej) => {
+  execCb(cmd, cwd ? {cwd: `../${cwd}`} : {}, (error, stdout, stderr) => {
+    if (error || stderr) {
+      rej(error || stderr)
+      return
+    }
+
+    res(stdout.trim())
+  })
+})

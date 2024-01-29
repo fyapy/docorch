@@ -1,8 +1,8 @@
-import {defineHandlers, masterRoute, slaveRoute} from '../../utils.ts'
-import {ip, callNode, nodePost} from '../../../deps.ts'
-import {Network, Volume, Env} from '../../types.ts'
-import {ContainerModel} from '../../database.ts'
-import * as docker from '../../docker.ts'
+import {defineHandlers, masterRoute, slaveRoute} from '../../utils'
+import {ip, callNode, nodePost} from '../../../deps'
+import {Network, Volume, Env} from '../../types'
+import {ContainerModel} from '../../database'
+import * as docker from '../../docker'
 
 const CREATE_CONTAINER = '/create-container'
 const LOCAL_CREATE_CONTAINER = '/local-create-container'
@@ -39,19 +39,15 @@ export default defineHandlers(api => {
   slaveRoute(api, {
     method: 'POST',
     url: LOCAL_CREATE_CONTAINER,
-    async handle(c) {
-      const body = await c.req.json<CreateContainerInput>()
-
-      return c.json(await createContainer(body))
+    async handle({body}, c) {
+      c.json(await createContainer(body))
     },
   })
 
   masterRoute(api, {
     method: 'POST',
     url: CREATE_CONTAINER,
-    async handle(c) {
-      const body = await c.req.json<CreateContainerInput>()
-
+    async handle({body}, c) {
       const containerWithSameName = ContainerModel.select().some(c => c.name === body.name)
       if (containerWithSameName) {
         throw new Error(`Container with name = "${body.name}" already exists`)
@@ -63,7 +59,7 @@ export default defineHandlers(api => {
 
       const data = ContainerModel.insert({id: crypto.randomUUID(), dockerId, ...body})
 
-      return c.json(data)
+      c.json(data)
     },
   })
 })

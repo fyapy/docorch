@@ -1,14 +1,10 @@
 #!/bin/sh
 mkdir -p /etc/docorch
-curl -sSL https://github.com/fyapy/docorch/raw/master/cli/docorch.zip -o /etc/docorch/docorch.zip
+curl -sSL https://github.com/fyapy/docorch/raw/master/cli/doctl -o /usr/bin/doctl
 
-apt install unzip -y
+chmod +x /etc/docorch/doctl
 
-unzip /etc/docorch/docorch.zip -d /etc/docorch
-chmod +x /etc/docorch/docorch
-
-rm -rf /etc/docorch/docorch.zip
-mv -f /etc/docorch/docorch /usr/bin/docorch
+mv -f /etc/docorch/doctl /usr/bin/doctl
 
 curl -sSL https://get.docker.com | sh
 usermod -aG docker $(whoami)

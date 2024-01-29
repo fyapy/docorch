@@ -1,8 +1,8 @@
-import {defineHandlers, masterRoute, slaveRoute} from '../../utils.ts'
-import {ContainerModel, Container, NotFound} from '../../database.ts'
-import {removeContainer} from '../remove-container/index.ts'
-import {createContainer} from '../create-container/index.ts'
-import {ip, callNode, nodePost} from '../../../deps.ts'
+import {defineHandlers, masterRoute, slaveRoute} from '../../utils'
+import {ContainerModel, Container, NotFound} from '../../database'
+import {removeContainer} from '../remove-container/index'
+import {createContainer} from '../create-container/index'
+import {ip, callNode, nodePost} from '../../../deps'
 
 const RECREATE_CONTAINER = '/recreate-container'
 const LOCAL_RECREATE_CONTAINER = '/local-recreate-container'
@@ -24,19 +24,15 @@ export default defineHandlers(api => {
   slaveRoute(api, {
     method: 'POST',
     url: LOCAL_RECREATE_CONTAINER,
-    async handle(c) {
-      const body = await c.req.json<Container>()
-
-      return c.json(await recreateContainer(body))
+    async handle({body}, c) {
+      c.json(await recreateContainer(body))
     },
   })
 
   masterRoute(api, {
     method: 'POST',
     url: RECREATE_CONTAINER,
-    async handle(c) {
-      const body = await c.req.json<{name: string}>()
-
+    async handle({body}, c) {
       const data = ContainerModel.selectBy('name', body.name)
       if (!data) {
         throw new NotFound(`Container with name = "${body.name}" not found`)
@@ -54,7 +50,7 @@ export default defineHandlers(api => {
       if (res.success) {
         ContainerModel.update('id', data.id, {dockerId: res.dockerId})
       }
-      return c.json(res)
+      c.json(res)
     },
   })
 })

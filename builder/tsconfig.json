@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "lib": ["es2020"],
+    "module": "es2022",
+    "target": "es2022",
+    "preserveConstEnums": true,
+    "moduleResolution": "node",
+    "allowImportingTsExtensions": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

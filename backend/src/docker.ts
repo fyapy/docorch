@@ -1,5 +1,5 @@
-import {Network, Volume, Env} from './types.ts'
-import {fetchUnix, delay} from '../deps.ts'
+import {Network, Volume, Env} from './types'
+import {fetchUnix, delay} from '../deps'
 
 const headers = {'Content-Type': 'application/json'} as const
 const post = {headers, method: 'POST', body: '{}'} as const

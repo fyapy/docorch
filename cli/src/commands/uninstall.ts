@@ -1,5 +1,5 @@
-import {cwd, fileRemoveSync, serviceName, servicePath} from '../utils.ts'
-import {execCommand} from '../cli.ts'
+import {cwd, fileRemoveSync, serviceName, servicePath} from '../utils'
+import {execCommand} from '../cli'
 
 export async function uninstallCommand() {
   await execCommand(`systemctl stop ${serviceName}`)

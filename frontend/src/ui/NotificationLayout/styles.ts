@@ -11,6 +11,7 @@ export const Absolute = styled.div`
 
 export const Notification = styled.div`
   padding: 10px;
+  margin-bottom: 10px;
   gap: 15px;
 
   display: flex;

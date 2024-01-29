@@ -1,5 +1,5 @@
-import {parseArgs} from '../deps.ts'
-import {cwd, exitProcess} from './utils.ts'
+import parseArgs from 'minimist'
+import {exec, exitProcess} from './utils'
 
 export enum Command {
   Recreate = 'recreate',
@@ -63,21 +63,12 @@ export function parseArguments(args: string[]) {
   exitProcess('Unknown command')
 }
 
-export async function execCommand(originalCommand: string) {
-  console.log(`Exec: ${originalCommand}`)
-  const [cmd, ...args] = originalCommand.split(' ')
+export async function execCommand(command: string) {
+  console.log(`Exec: ${command}`)
 
-  const command = new Deno.Command(cmd, {args, cwd})
-
-  const {code, stderr, stdout} = await command.output()
-
-  const error = new TextDecoder().decode(stderr)
-  const out = new TextDecoder().decode(stdout)
-  const output = {code, error, out}
-
-  if (code === 0) {
-    return output
+  try {
+    return await exec(command)
+  } catch (e) {
+    exitProcess(`Execure command error: `, JSON.stringify(e))
   }
-
-  exitProcess(`Execure command error: `, JSON.stringify(output))
 }
