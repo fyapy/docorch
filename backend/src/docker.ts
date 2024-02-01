@@ -37,25 +37,20 @@ export async function pullImage(name: string) {
 }
 
 export async function containers() {
-  try {
-    const res = await fetchUnix('/containers/json?all=true')
-    return await res.json() as {
-      Id: string
-      Names: string[]
-      Image: string
-      ImageID: string
-      Ports: {
-        PrivatePort: number
-        PublicPort: number
-      }[]
-      State: 'exited' | 'running'
-      Status: string
-      Mounts: {}[]
+  const res = await fetchUnix('/containers/json?all=true')
+  return await res.json() as {
+    Id: string
+    Names: string[]
+    Image: string
+    ImageID: string
+    Ports: {
+      PrivatePort: number
+      PublicPort: number
     }[]
-  } catch (e) {
-    console.error(`Docker containers error `, e)
-    throw e
-  }
+    State: 'exited' | 'running'
+    Status: string
+    Mounts: {}[]
+  }[]
 }
 
 export async function enabled() {
@@ -74,7 +69,7 @@ export async function startContainer(id: string) {
 }
 
 export async function stopContainer(id: string) {
-  if (!id) throw new Error('startContainer id required!')
+  if (!id) throw new Error('stopContainer id required!')
 
   await fetchUnix(`/containers/${id}/stop`, post)
 }
@@ -121,7 +116,7 @@ export async function createContainer({name, hostname, image, envs, networks, vo
 }
 
 export async function removeContainer(id: string) {
-  if (!id) throw new Error('startContainer id required!')
+  if (!id) throw new Error('removeContainer id required!')
 
   await fetchUnix(`/containers/${id}?force=true`, {...post, method: 'DELETE'})
 }

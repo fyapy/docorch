@@ -5,6 +5,6 @@ export default defineHandlers(api => {
   masterRoute(api, {
     url: '/hosts',
     method: 'GET',
-    handle: () => HostModel.select(),
+    handle: (req, c) => c.json(HostModel.select()),
   })
 })

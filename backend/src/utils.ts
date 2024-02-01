@@ -1,28 +1,23 @@
-import {Express, RequestHandler, ErrorRequestHandler} from 'express'
+import {Express, RequestHandler} from 'express'
 import {checkDiskSpace, socketPath} from '../deps'
-// import {NotFound} from './database'
-// import {enabled} from './docker'
+import {NotFound} from './database'
+import {enabled} from './docker'
 import {flags} from './flags'
 
-export const handleError: ErrorRequestHandler = (err, req, res, next) => {
-  console.error(err.stack)
-  res.status(500).send('Something broke!')
+const handleError = (handle: RequestHandler): RequestHandler => async (req, res, next) => {
+  try {
+    await handle(req, res, next)
+  } catch (err: any) {
+    if (err instanceof NotFound) {
+      return res.status(404).json({message: 'Database Object not found'})
+    }
 
-  // return {err: true}
+    if (err.cause?.address === socketPath) {
+      return res.status(500).json({message: 'Docker deamon not started'})
+    }
 
-  // if (err instanceof NotFound) {
-  //   return c.json({message: 'Database Object not found'}, 404)
-  // }
-
-  // if ((err.cause as any)?.address === socketPath) {
-  //   return c.json({message: 'Docker deamon not started'}, 500)
-  // }
-
-  // if (err instanceof Response) {
-  //   return err
-  // }
-
-  // return c.json({message: err.message || 'Unknown error'}, 400)
+    res.status(400).json({message: err.message || 'Unknown error'})
+  }
 }
 
 type RouteOptions = {
@@ -39,12 +34,12 @@ export function masterRoute(app: Express, {method, url, handle}: RouteOptions) {
 
   if (method === 'GET') {
     console.log(`${method}  ${apiUrl}`)
-    app.get(apiUrl, handle)
+    app.get(apiUrl, handleError(handle))
     return
   }
   if (method === 'POST') {
     console.log(`${method} ${apiUrl}`)
-    app.post(apiUrl, handle)
+    app.post(apiUrl, handleError(handle))
     return
   }
 
@@ -59,12 +54,12 @@ export function slaveRoute(app: Express, {method, url, handle}: RouteOptions) {
 
   if (method === 'GET') {
     console.log(`${method}  ${apiUrl}`)
-    app.get(apiUrl, handle)
+    app.get(apiUrl, handleError(handle))
     return
   }
   if (method === 'POST') {
     console.log(`${method} ${apiUrl}`)
-    app.post(apiUrl, handle)
+    app.post(apiUrl, handleError(handle))
     return
   }
 
@@ -99,10 +94,8 @@ export async function getDiskInfo() {
 export const version = '29.14.17'
 
 export async function stats(ip: string) {
-  // const space = await getDiskInfo()
-  const space = {total: '0', free: '0'}
-  // const docker = await enabled()
-  const docker = false
+  const space = await getDiskInfo()
+  const docker = await enabled()
   const mode = flags.master ? 'master' : 'slave'
   const master = mode === 'master'
   const online = true

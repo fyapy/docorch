@@ -1,37 +1,35 @@
-import express from 'express'
 import cors from 'cors'
-import {handleError, stats, version} from './utils'
+import express from 'express'
+import {flags, parseAppFlags} from './flags'
+import {stats, version} from './utils'
 import {ServerModel} from './database'
-import {flags} from './flags'
 import {ip} from '../deps'
 import api from './api'
 import ui from '../ui-template'
 
-if (flags.master && !ServerModel.exists('ip', ip)) {
-  ServerModel.insert({ip})
-}
+parseAppFlags().then(() => {
+  if (flags.master && !ServerModel.exists('ip', ip)) {
+    ServerModel.insert({ip})
+  }
 
-const app = express()
+  const app = express()
 
-app.set('trust proxy', true)
+  app.set('trust proxy', true)
 
-app.use(cors)
-app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+  app.use(cors())
+  app.use(express.json())
 
-app.get('/', () => ({}))
-app.get('/stats', () => stats(ip))
+  app.get('/', (req, res) => res.json({}))
+  app.get('/stats', async (req, res) => res.json(await stats(ip)))
 
-api(app)
+  api(app)
 
-if (flags.master) {
-  ui(app)
-}
+  if (flags.master) {
+    ui(app)
+  }
 
-app.use(handleError)
+  const port = 4545
+  const hostname = '0.0.0.0'
 
-
-const port = 4545
-const hostname = '0.0.0.0'
-
-app.listen(port, hostname, () => console.log(`Listening on http://${hostname}:${port}/ version ${version}`))
+  app.listen(port, hostname, () => console.log(`Listening on http://${hostname}:${port}/ version ${version}`))
+})

@@ -12,11 +12,11 @@ export default defineHandlers(api => {
   slaveRoute(api, {
     method: 'GET',
     url: LOCAL_CONTAINERS,
-    async handle() {
+    async handle(req, c) {
       try {
-        return await docker.containers()
+        c.json(await docker.containers())
       } catch {
-        return []
+        c.json([])
       }
     },
   })
@@ -24,7 +24,7 @@ export default defineHandlers(api => {
   masterRoute(api, {
     method: 'GET',
     url: CONTAINERS,
-    async handle() {
+    async handle(req, c) {
       const responses = await Promise.all(ServerModel.select().map(({ip: serverIp}) => {
         if (serverIp === ip) {
           try {
@@ -41,7 +41,7 @@ export default defineHandlers(api => {
         }
       }))
 
-      return ContainerModel.select().map(item => {
+      c.json(ContainerModel.select().map(item => {
         const docker = responses.flat().find(d => d.Id === item.dockerId)
 
         return {
@@ -58,7 +58,7 @@ export default defineHandlers(api => {
             : null,
           ...item,
         }
-      })
+      }))
     },
   })
 })

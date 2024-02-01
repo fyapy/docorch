@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import {defineHandlers, masterRoute, slaveRoute} from '../../utils'
 import {Host, HostModel, ServerModel} from '../../database'
 import {callNode, ip, nodePost, z, fs} from '../../../deps'
@@ -22,17 +23,17 @@ export default defineHandlers(api => {
   slaveRoute(api, {
     url: LOCAL_CREATE_HOST,
     method: 'POST',
-    async handle({body}) {
+    async handle({body}, c) {
       hostsInster(body)
 
-      return {success: true}
+      c.json({success: true})
     },
   })
 
   masterRoute(api, {
     url: CREATE_HOST,
     method: 'POST',
-    async handle({body}, res) {
+    async handle({body}, c) {
       schema.parse(body)
 
       if (HostModel.select().some(h => h.ip === body.ip || h.host === body.host)) {
@@ -50,7 +51,7 @@ export default defineHandlers(api => {
         })
       )
 
-      res.json({success: true})
+      c.json({success: true})
     },
   })
 })

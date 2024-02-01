@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import {defineHandlers, masterRoute, slaveRoute} from '../../utils'
 import {ip, callNode, nodePost} from '../../../deps'
 import {Network, Volume, Env} from '../../types'
