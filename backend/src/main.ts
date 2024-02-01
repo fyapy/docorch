@@ -5,7 +5,7 @@ import {stats, version} from './utils'
 import {ServerModel} from './database'
 import {ip} from '../deps'
 import api from './api'
-import ui from '../ui-template'
+import ui from '../ui'
 
 parseAppFlags().then(() => {
   if (flags.master && !ServerModel.exists('ip', ip)) {
