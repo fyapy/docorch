@@ -35,7 +35,7 @@ export async function installCommand(meta: {slave?: string; master?: string}) {
     await download(backendUrl, cwd)
     console.log('Backend download finish')
 
-    await execCommand(`chmod +x ./backend`)
+    await execCommand(`chmod +x ${cwd}/backend`)
 
     fs.writeFileSync(servicePath, service)
     console.log(`Created ${servicePath}`)
