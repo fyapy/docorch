@@ -28,6 +28,8 @@ export * as fs from 'fs'
 export {default as path} from 'path'
 
 export async function callNode<T = {}>(serverId: string, url: string, {method = 'GET', body, headers, prefix = '/api'}: FetchUnixOptions = {}) {
+  process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0 as unknown as string
+
   const res = await fetch(`http://${serverId}:4545${prefix}${url}`, {method, body, headers})
   if (res.ok) {
     return await res.json() as T

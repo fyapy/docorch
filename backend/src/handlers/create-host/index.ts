@@ -23,17 +23,19 @@ export default defineHandlers(api => {
   slaveRoute(api, {
     url: LOCAL_CREATE_HOST,
     method: 'POST',
-    async handle({body}, c) {
+    async handle(c) {
+      const body = c.request.body
       hostsInster(body)
 
-      c.json({success: true})
+      c.body = {success: true}
     },
   })
 
   masterRoute(api, {
     url: CREATE_HOST,
     method: 'POST',
-    async handle({body}, c) {
+    async handle(c) {
+      const body = c.request.body
       schema.parse(body)
 
       if (HostModel.select().some(h => h.ip === body.ip || h.host === body.host)) {
@@ -51,7 +53,7 @@ export default defineHandlers(api => {
         })
       )
 
-      c.json({success: true})
+      c.body = {success: true}
     },
   })
 })

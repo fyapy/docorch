@@ -12,25 +12,27 @@ export default defineHandlers(api => {
   slaveRoute(api, {
     method: 'POST',
     url: LOCAL_START_CONTAINER,
-    async handle({body}, c) {
+    async handle(c) {
+      const body = c.request.body
       await startContainer(body.dockerId)
 
-      c.json({success: Boolean(body.dockerId)})
+      c.body = {success: Boolean(body.dockerId)}
     },
   })
 
   masterRoute(api, {
     method: 'POST',
     url: START_CONTAINER,
-    async handle({body}, c) {
+    async handle(c) {
+      const body = c.request.body
       const {serverIp, dockerId} = ContainerModel.selectBy('id', body.id)
 
       if (serverIp === ip) {
         await startContainer(dockerId)
-        return c.json({success: Boolean(dockerId)})
+        return c.body = {success: Boolean(dockerId)}
       }
 
-      c.json(await callNode(serverIp, LOCAL_START_CONTAINER, nodePost({dockerId})))
+      c.body = await callNode(serverIp, LOCAL_START_CONTAINER, nodePost({dockerId}))
     },
   })
 })

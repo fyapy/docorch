@@ -24,15 +24,17 @@ export default defineHandlers(api => {
   slaveRoute(api, {
     method: 'POST',
     url: LOCAL_RECREATE_CONTAINER,
-    async handle({body}, c) {
-      c.json(await recreateContainer(body))
+    async handle(c) {
+      const body = c.request.body
+      c.body = await recreateContainer(body)
     },
   })
 
   masterRoute(api, {
     method: 'POST',
     url: RECREATE_CONTAINER,
-    async handle({body}, c) {
+    async handle(c) {
+      const body = c.request.body
       const data = ContainerModel.selectBy('name', body.name)
       if (!data) {
         throw new NotFound(`Container with name = "${body.name}" not found`)
@@ -43,14 +45,14 @@ export default defineHandlers(api => {
         if (res.success) {
           ContainerModel.update('id', data.id, {dockerId: res.dockerId})
         }
-        return c.json(res)
+        return c.body = res
       }
 
       const res = await callNode<RecreateContainer>(data.serverIp, LOCAL_RECREATE_CONTAINER, nodePost(data))
       if (res.success) {
         ContainerModel.update('id', data.id, {dockerId: res.dockerId})
       }
-      c.json(res)
+      c.body = res
     },
   })
 })

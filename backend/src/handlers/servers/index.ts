@@ -6,7 +6,7 @@ export default defineHandlers(api => {
   masterRoute(api, {
     method: 'GET',
     url: '/servers',
-    async handle(req, c) {
+    async handle(c) {
       const servers = ServerModel.select().map(async server => {
         if (server.ip === ip) {
           return await stats(server.ip)
@@ -19,7 +19,7 @@ export default defineHandlers(api => {
         }
       })
 
-      c.json(await Promise.all(servers))
+      c.body = await Promise.all(servers)
     },
   })
 })

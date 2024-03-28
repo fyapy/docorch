@@ -9,9 +9,9 @@ import createHost from './handlers/create-host/index'
 import containers from './handlers/containers/index'
 import servers from './handlers/servers/index'
 import hosts from './handlers/hosts/index'
-import {Express} from 'express'
+import Router from '@koa/router'
 
-export default (app: Express) => {
+export default (app: Router) => {
   hosts(app)
   createHost(app)
   removeHost(app)

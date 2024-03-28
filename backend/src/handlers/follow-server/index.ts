@@ -9,20 +9,21 @@ export default defineHandlers(api => {
   masterRoute(api, {
     method: 'POST',
     url: '/follow-server',
-    async handle({body, ip}, c) {
-      const clientIp = ip!
+    async handle(c) {
+      const body = c.request.body
+      const clientIp = c.request.ip
 
       if (!body.token || body.token !== masterHash || !clientIp) {
         throw new Error('Bad request')
       }
 
       if (ServerModel.select().some(server => server.ip === clientIp)) {
-        return c.json(<FollowDTO>{success: false, message: 'Follower already added'})
+        return c.body = <FollowDTO>{success: false, message: 'Follower already added'}
       }
 
       ServerModel.insert({ip: clientIp})
 
-      c.json(<FollowDTO>{success: true, message: 'Success'})
+      c.body = <FollowDTO>{success: true, message: 'Success'}
     }
   })
 })

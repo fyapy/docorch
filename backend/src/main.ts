@@ -1,35 +1,40 @@
-import cors from 'cors'
-import express from 'express'
+import Koa from 'koa'
+import cors from '@koa/cors'
+import http2 from 'node:http2'
+import Router from '@koa/router'
+import {koaBody} from 'koa-body'
 import {flags, parseAppFlags} from './flags'
-import {stats, version} from './utils'
+import {setupSSL, stats, version} from './utils'
 import {ServerModel} from './database'
 import {ip} from '../deps'
 import api from './api'
 import ui from '../ui'
 
-parseAppFlags().then(() => {
+parseAppFlags().then(async () => {
   if (flags.master && !ServerModel.exists('ip', ip)) {
     ServerModel.insert({ip})
   }
 
-  const app = express()
-
-  app.set('trust proxy', true)
+  const app = new Koa({proxy: true})
+  const router = new Router()
 
   app.use(cors())
-  app.use(express.json())
+  app.use(koaBody())
 
-  app.get('/', (req, res) => res.json({}))
-  app.get('/stats', async (req, res) => res.json(await stats(ip)))
+  router.get('/', c => c.body = {})
+  router.get('/stats', async c => c.body = await stats(ip))
 
-  api(app)
+  api(router)
 
   if (flags.master) {
-    ui(app)
+    ui(router)
   }
 
   const port = 4545
   const hostname = '0.0.0.0'
 
-  app.listen(port, hostname, () => console.log(`Listening on http://${hostname}:${port}/ version ${version}`))
+  const ssl = await setupSSL()
+
+  http2.createSecureServer(ssl, app.use(router.routes()).use(router.allowedMethods()).callback())
+    .listen(port, hostname, () => console.log(`Listening on https://${hostname}:${port}/ version ${version}`))
 })

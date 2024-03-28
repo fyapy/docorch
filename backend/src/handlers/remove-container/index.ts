@@ -32,17 +32,19 @@ export default defineHandlers(api => {
   slaveRoute(api, {
     method: 'POST',
     url: LOCAL_REMOVE_CONTAINER,
-    async handle({body}, c) {
+    async handle(c) {
+      const body = c.request.body
       await removeContainer(body.dockerId)
 
-      c.json({success: Boolean(body.dockerId)})
+      c.body = {success: Boolean(body.dockerId)}
     },
   })
 
   masterRoute(api, {
     method: 'POST',
     url: REMOVE_CONTAINER,
-    async handle({body}, c) {
+    async handle(c) {
+      const body = c.request.body
       const {serverIp, dockerId} = ContainerModel.selectBy('id', body.id)
 
       if (serverIp === ip) {
@@ -50,14 +52,14 @@ export default defineHandlers(api => {
         if (res.success) {
           ContainerModel.remove('id', body.id)
         }
-        return c.json(res)
+        return c.body = res
       }
 
       const res = await callNode<RemoveContainer>(serverIp, LOCAL_REMOVE_CONTAINER, nodePost({dockerId}))
       if (res.success) {
         ContainerModel.remove('id', body.id)
       }
-      c.json(res)
+      c.body = res
     },
   })
 })

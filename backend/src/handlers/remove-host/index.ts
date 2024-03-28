@@ -20,17 +20,19 @@ export default defineHandlers(api => {
   slaveRoute(api, {
     url: LOCAL_REMOVE_HOST,
     method: 'POST',
-    async handle({body}, c) {
+    async handle(c) {
+      const body = c.request.body
       hostsRemove(body)
 
-      c.json({success: true})
+      c.body = {success: true}
     },
   })
 
   masterRoute(api, {
     url: REMOVE_HOST,
     method: 'POST',
-    async handle({body}, c) {
+    async handle(c) {
+      const body = c.request.body
       schema.parse(body)
 
       const host = HostModel.select().find(h => h.id === body.id)
@@ -49,7 +51,7 @@ export default defineHandlers(api => {
       HostModel.remove('id', body.id)
 
 
-      c.json({success: true})
+      c.body = {success: true}
     },
   })
 })

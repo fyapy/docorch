@@ -1,31 +1,40 @@
-import {Express, RequestHandler} from 'express'
-import {checkDiskSpace, socketPath} from '../deps'
+import Router from '@koa/router'
+import crypto from 'node:crypto'
+import {Context, Middleware} from 'koa'
+import {addDays, isBefore} from 'date-fns'
+import {createCA, createCert} from 'mkcert'
+import {checkDiskSpace, fs, ip, socketPath} from '../deps'
 import {NotFound} from './database'
 import {enabled} from './docker'
 import {flags} from './flags'
 
-const handleError = (handle: RequestHandler): RequestHandler => async (req, res, next) => {
+const handleError = (handle: (c: Context) => any): Middleware => async c => {
   try {
-    await handle(req, res, next)
+    await handle(c)
   } catch (err: any) {
     if (err instanceof NotFound) {
-      return res.status(404).json({message: 'Database Object not found'})
+      c.status = 404
+      c.body = {message: 'Database Object not found'}
+      return
     }
 
     if (err.cause?.address === socketPath) {
-      return res.status(500).json({message: 'Docker deamon not started'})
+      c.status = 500
+      c.body = {message: 'Docker deamon not started'}
+      return
     }
 
-    res.status(400).json({message: err.message || 'Unknown error'})
+    c.status = 400
+    c.body = {message: err.message || 'Unknown error'}
   }
 }
 
 type RouteOptions = {
   method: 'GET' | 'POST',
   url: string
-  handle: RequestHandler
+  handle: (c: Context) => any
 }
-export function masterRoute(app: Express, {method, url, handle}: RouteOptions) {
+export function masterRoute(app: Router, {method, url, handle}: RouteOptions) {
   if (!flags.master) {
     return
   }
@@ -45,7 +54,7 @@ export function masterRoute(app: Express, {method, url, handle}: RouteOptions) {
 
   console.error(`masterRoute error ${method} ${apiUrl}`)
 }
-export function slaveRoute(app: Express, {method, url, handle}: RouteOptions) {
+export function slaveRoute(app: Router, {method, url, handle}: RouteOptions) {
   if (!flags.slave) {
     return
   }
@@ -66,7 +75,7 @@ export function slaveRoute(app: Express, {method, url, handle}: RouteOptions) {
   console.error(`slaveRoute error ${method} ${apiUrl}`)
 }
 
-export const defineHandlers = (handlers: (app: Express) => void) => (app: Express) => handlers(app)
+export const defineHandlers = (handlers: (app: Router) => void) => (app: Router) => handlers(app)
 
 function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) {
@@ -91,7 +100,7 @@ export async function getDiskInfo() {
   }
 }
 
-export const version = '01.08.34'
+export const version = '29.02.55'
 
 export async function stats(ip: string) {
   const space = await getDiskInfo()
@@ -113,3 +122,56 @@ export const defaultStats = (ip: string) => ({
   total: '0',
   free: '0',
 })
+
+function isCertExpired(dir: string) {
+  const cert = fs.readFileSync(`${dir}/localhost.crt`)
+
+  return isBefore(
+    new Date(new crypto.X509Certificate(cert).validTo),
+    addDays(new Date(), 10),
+  )
+}
+
+async function createSSL(dir: string) {
+  const certPath = `${dir}/localhost.crt`
+  if (fs.existsSync(certPath)) {
+    fs.unlinkSync(certPath)
+  }
+
+  const keyPath = `${dir}/localhost.key`
+  if (fs.existsSync(keyPath)) {
+    fs.unlinkSync(keyPath)
+  }
+
+  const cert = await createCert({
+    ca: await createCA({
+      organization: '',
+      countryCode: '',
+      state: '',
+      locality: '',
+      validity: 365,
+    }),
+    domains: [ip, '127.0.0.1', 'localhost'],
+    validity: 365,
+  })
+  
+  fs.writeFileSync(certPath, cert.cert)
+  fs.writeFileSync(keyPath, cert.key)
+}
+
+export async function setupSSL() {
+  const SSL_DIR = `${process.cwd().replace('/dist', '')}/ssl`
+  if (!fs.existsSync(SSL_DIR)) {
+    fs.mkdirSync(SSL_DIR)
+    await createSSL(SSL_DIR)
+  }
+
+  if (isCertExpired(SSL_DIR)) {
+    await createSSL(SSL_DIR)
+  }
+
+  return {
+    cert: fs.readFileSync(`${SSL_DIR}/localhost.crt`),
+    key: fs.readFileSync(`${SSL_DIR}/localhost.key`),
+  }
+}
