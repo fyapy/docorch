@@ -44,6 +44,6 @@ export async function parseAppFlags() {
     throw new Error(`Flags not provided ${JSON.stringify({
       env: process.env,
       flags,
-    })}`)
+    }, null, 2)}`)
   }
 }

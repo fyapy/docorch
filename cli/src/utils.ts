@@ -10,7 +10,7 @@ export function fileRemoveSync(path: string) {
 
 export const cwd = '/etc/docorch'
 
-export const version = '29.02.55'
+export const version = '29.08.27'
 
 export const isLinux = process.platform === 'linux'
 

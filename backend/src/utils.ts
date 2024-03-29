@@ -100,7 +100,7 @@ export async function getDiskInfo() {
   }
 }
 
-export const version = '29.02.55'
+export const version = '29.08.27'
 
 export async function stats(ip: string) {
   const space = await getDiskInfo()
