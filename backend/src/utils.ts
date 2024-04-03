@@ -123,8 +123,10 @@ export const defaultStats = (ip: string) => ({
   free: '0',
 })
 
-function isCertExpired(dir: string) {
-  const cert = fs.readFileSync(`${dir}/localhost.crt`)
+const SSL_DIR = `${process.cwd().replace('/dist', '')}/ssl`
+
+export async function isCertExpired() {
+  const cert = await fs.promises.readFile(`${SSL_DIR}/localhost.crt`)
 
   return isBefore(
     new Date(new crypto.X509Certificate(cert).validTo),
@@ -132,13 +134,13 @@ function isCertExpired(dir: string) {
   )
 }
 
-async function createSSL(dir: string) {
-  const certPath = `${dir}/localhost.crt`
+async function createSSL() {
+  const certPath = `${SSL_DIR}/localhost.crt`
   if (fs.existsSync(certPath)) {
     fs.unlinkSync(certPath)
   }
 
-  const keyPath = `${dir}/localhost.key`
+  const keyPath = `${SSL_DIR}/localhost.key`
   if (fs.existsSync(keyPath)) {
     fs.unlinkSync(keyPath)
   }
@@ -160,14 +162,13 @@ async function createSSL(dir: string) {
 }
 
 export async function setupSSL() {
-  const SSL_DIR = `${process.cwd().replace('/dist', '')}/ssl`
   if (!fs.existsSync(SSL_DIR)) {
     fs.mkdirSync(SSL_DIR)
-    await createSSL(SSL_DIR)
+    await createSSL()
   }
 
-  if (isCertExpired(SSL_DIR)) {
-    await createSSL(SSL_DIR)
+  if (await isCertExpired()) {
+    await createSSL()
   }
 
   return {

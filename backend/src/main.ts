@@ -4,7 +4,7 @@ import http2 from 'node:http2'
 import Router from '@koa/router'
 import {koaBody} from 'koa-body'
 import {flags, parseAppFlags} from './flags'
-import {setupSSL, stats, version} from './utils'
+import {isCertExpired, setupSSL, stats, version} from './utils'
 import {ServerModel} from './database'
 import {ip} from '../deps'
 import api from './api'
@@ -30,11 +30,32 @@ parseAppFlags().then(async () => {
     ui(router)
   }
 
+  app.use(router.routes()).use(router.allowedMethods())
+
   const port = 4545
   const hostname = '0.0.0.0'
 
-  const ssl = await setupSSL()
+  async function startServer(app: Koa) {
+    const internalServer = http2
+      .createSecureServer(await setupSSL(), app.callback())
+      .listen(
+        port,
+        hostname,
+        () => console.log(`Listening on https://${hostname}:${port}/ version ${version}`),
+      )
 
-  http2.createSecureServer(ssl, app.use(router.routes()).use(router.allowedMethods()).callback())
-    .listen(port, hostname, () => console.log(`Listening on https://${hostname}:${port}/ version ${version}`))
+    return () => new Promise<void>(res => internalServer.close(() => {
+      console.log('Server stopped')
+      res()
+    }))
+  }
+
+  let stopServer = await startServer(app)
+
+  setInterval(async () => {
+    if (await isCertExpired()) {
+      await stopServer()
+      stopServer = await startServer(app)
+    }
+  }, 86400 * 1000)
 })

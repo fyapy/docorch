@@ -26,7 +26,9 @@ export async function parseAppFlags() {
     if (flags.slave === devIp) {
       console.log('Slave runned success=true message=Runned not in production mode')
     } else {
-      const res = await fetch(`http://${flags.slave}:4545/api/follow-server`, {
+      process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0 as unknown as string
+
+      const res = await fetch(`https://${flags.slave}:4545/api/follow-server`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({token: flags.slave}),
